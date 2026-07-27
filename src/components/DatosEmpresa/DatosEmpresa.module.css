@@ -1,0 +1,23 @@
+.companyNameData {
+  margin: 2rem 0 0;
+  color: var(--color-blanco);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.companyIsotype {
+  width: 3.5rem;
+  height: auto;
+}
+
+.companyName {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.rif {
+  font-size: 0.8rem;
+}

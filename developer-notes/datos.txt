@@ -1,0 +1,39 @@
+# Datos que recopila Sorelys
+
+- Datos de la tabla Factura:
+  - Código de la Factura.
+  - Código del Control (el código del papel como tal).
+  - Fecha de emisión (de la factura).
+  - Titular (Nombre de la persona/seguro responsable del pago)
+  - Forma de Pago (PARTICULAR o EMPRESA)
+  - Detalles de la Factura:
+    - Suministros Hospitalarios (Monto total): bolívares
+    - Servicios Cobrables (Monto total): bolívares
+    - Medicamentos (Monto total): bolívares
+    - Honorarios médicos (Monto total): bolívares
+  - Tasa del dólar (Preguntar de qué dia, aunque supongo que es del día en el que cancela)
+  - Estatus de la Factura (PROCESADA o ANULADA) -> Recuerda que no se eliminan facturas en la vida real, en caso de haber un problema se sigue registrando solo que como ANULADA.
+  - Motivo -> este campo debe ser null, y que en mi logica de la aplicación solo se pueda ver si el Estatus de la Factura era ANULADA.
+  - Plan QX (HOSPITALIZACIÓN, PLAN CRG, PLAN URL, PLAN OFT) -> No sé realmente que significa
+
+
+- Datos de la tabla Historia:
+  - Fecha de Ingreso
+  - Fecha de Egreso
+  - Tipo de Ingreso (EMPRESA o PARTICULAR)
+  - Cirugias (SI o NO)
+  - Diagnóstico
+
+
+- Datos de la tabla Paciente:
+  - Cédula del paciente
+  - Nombres
+  - Apellidos
+  - Números de teléfono
+
+
+- Datos de la tabla Medico:
+  - Cédula del médico
+  - Nombres
+  - Apellidos
+  - Especialidad (por ahora conozco: Ginecobstetra, Traumatólogo, Cirujano General, Internista, Urólogo, Oftalmólogo) -> Esto debería manejarlo como un VARCHAR, y para evitar discrepancias en los datos, el frontend debe tener es un select para las especialidades, no un input.

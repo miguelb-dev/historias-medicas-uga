@@ -1,0 +1,59 @@
+* {
+  font-family: Montserrat, sans-serif;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  /* Colores principales de Interfaz */
+  --color-azul-marino: #092e79e4;
+  --color-azul-oscuro: #2d5a8c;
+  --color-blanco: #ffffff;
+  --color-gris-claro: #e8e9ea;
+  --color-gris-medio: #cbd5e1;
+  --color-gris-oscuro: #c7c7c7;
+  --color-gris-muy-oscuro: #4e4e4e;
+
+  /* Colores de acciones */
+  --color-azul: #1a55d4e6;
+  --color-negro: #161616;
+  --color-rojo-error: #dc2626;
+  --color-verde-exito: #10b981;
+  --color-amarillo-advertencia: #f59e0b;
+}
+
+body {
+  background: var(--third-color);
+  color: var(--fourth-color);
+}
+
+#root {
+  min-height: 100vh; /* Mantiene abajo del todo el footer */
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "header header header"
+    "sidebar main main"
+    "footer footer footer";
+}
+
+#header {
+  grid-area: header;
+}
+
+#sidebar {
+  grid-area: sidebar;
+}
+
+#main {
+  grid-area: main;
+  background-color: var(--color-gris-claro);
+}
+
+#footer {
+  grid-area: footer;
+}

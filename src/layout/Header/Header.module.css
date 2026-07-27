@@ -1,0 +1,38 @@
+.header {
+  padding: 0rem 2rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-azul-marino);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.softwareData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+}
+
+.softwareNameWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  align-self: center;
+}
+
+.softwareName,
+.softwareDescription {
+  color: var(--color-blanco);
+}
+
+.softwareDescription {
+  font-size: 1rem;
+}
