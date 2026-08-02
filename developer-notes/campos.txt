@@ -1,27 +1,29 @@
-# Datos que recopila Sorelys
+# Explicación de los campos de la Base de Datos (no están todos, faltan algunos)
 
 - Datos de la tabla Factura:
   - Código de la Factura.
   - Código del Control (el código del papel como tal).
   - Fecha de emisión (de la factura).
   - Titular (Nombre de la persona/seguro responsable del pago)
+  - Tipo de Ingreso (EMPRESA o PARTICULAR)
   - Forma de Pago (PARTICULAR o EMPRESA)
   - Detalles de la Factura:
     - Suministros Hospitalarios (Monto total): bolívares
     - Servicios Cobrables (Monto total): bolívares
     - Medicamentos (Monto total): bolívares
-    - Honorarios médicos (Monto total): bolívares
+    - Honorarios médicos y servicios auxiliares (Monto total): bolívares
   - Tasa del dólar (Preguntar de qué dia, aunque supongo que es del día en el que cancela)
   - Estatus de la Factura (PROCESADA o ANULADA) -> Recuerda que no se eliminan facturas en la vida real, en caso de haber un problema se sigue registrando solo que como ANULADA.
-  - Motivo -> este campo debe ser null, y que en mi logica de la aplicación solo se pueda ver si el Estatus de la Factura era ANULADA.
-  - Plan QX (HOSPITALIZACIÓN, PLAN CRG, PLAN URL, PLAN OFT) -> No sé realmente que significa
+  - Nota de Crédito -> este campo debe ser null, y que en mi logica de la aplicación solo se pueda ver si el Estatus de la Factura era ANULADA.
+  - Motivo -> este campo debe ser null, y que en mi logica de la aplicación solo se pueda ver si el Estatus de la Factura era ANULADA o NOTA DE CREDITO.
 
 
 - Datos de la tabla Historia:
+  - Código de la Historia
   - Fecha de Ingreso
   - Fecha de Egreso
-  - Tipo de Ingreso (EMPRESA o PARTICULAR)
   - Cirugias (SI o NO)
+  - Tipo de Cirugía (En el exel aparece como Plan QX) (HOSPITALIZACIÓN, PLAN CRG, PLAN URL, PLAN OFT)
   - Diagnóstico
 
 
@@ -29,7 +31,9 @@
   - Cédula del paciente
   - Nombres
   - Apellidos
-  - Números de teléfono
+  - Fecha de Nacimiento
+  - Edad
+  - Dirección
 
 
 - Datos de la tabla Medico:

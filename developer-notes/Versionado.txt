@@ -1,0 +1,12 @@
+v1.0.O
+
+1. Base de Datos.
+2. CRUD de Historias Médicas.
+3. Dashboard Estadístico.
+4. Sign-In.
+
+
+v1.1.0
+
+1. Generador de Exel y/o PDF
+2. Control de Usuario

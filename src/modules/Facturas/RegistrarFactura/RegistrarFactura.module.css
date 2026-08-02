@@ -1,0 +1,145 @@
+.form {
+  background-color: var(--color-blanco);
+  width: 85%;
+  padding: 2.5rem;
+  border-radius: 20px;
+  margin: 0 auto 9rem;
+}
+
+.formTitle {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  color: #1a1a2e;
+  margin-bottom: 4rem;
+}
+
+/* Fieldset y legend */
+fieldset {
+  border: 1.5px solid #cdcdcd;
+  border-radius: 10px;
+  padding: 1.8rem;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+
+  margin-bottom: 4rem;
+}
+
+legend {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-negro);
+  padding: 0 0.5rem;
+  width: auto;
+}
+
+/* Campos */
+.inputWrapper {
+  flex-grow: 1;
+  flex-basis: 250px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  /* * Garantiza que todos los campos tengan un ancho similar */
+}
+
+label {
+  font-size: 1rem;
+}
+.requireSymbol {
+  margin-left: 0.5rem;
+  text-align: center;
+  color: #e74c3c;
+}
+.moneyType {
+  color: rgb(45, 203, 95);
+}
+
+input,
+select,
+textarea {
+  padding: 10px 14px;
+  border: 1.5px solid #cdcdcd;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  color: #333;
+  background-color: white;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+input:hover,
+select:hover,
+textarea:focus {
+  border-color: #3498db;
+}
+select {
+  cursor: pointer;
+}
+textarea {
+  resize: none;
+}
+.disabledInput {
+  color: gray;
+  cursor: not-allowed;
+}
+
+/* Botón de búsqueda */
+.searchButton {
+  width: min-content;
+  margin: auto;
+  padding: 0.6rem 1.2rem;
+  background: var(--color-azul);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.searchButton:hover {
+  background: rgb(41, 91, 165);
+}
+
+/* === BOTONES DE ACCIÓN === */
+.buttonWrapper {
+  display: flex;
+  gap: 15px;
+}
+.saveButton,
+.cancelButton {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.saveButton {
+  background: #22bb6e;
+  color: white;
+}
+.saveButton:hover {
+  background: #1ea863;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+.cancelButton {
+  background: #888c8f;
+  color: white;
+}
+.cancelButton:hover {
+  background: #6b6c6e;
+  transform: translateY(-2px);
+}

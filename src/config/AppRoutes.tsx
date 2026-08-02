@@ -1,10 +1,13 @@
 import { Routes, Route } from "react-router-dom";
 
 // Rendimiento
-import { Rendimiento } from "../pages/Rendimiento/index.tsx";
+import { Rendimiento } from "../modules/Rendimiento/index.tsx";
 
-// Historias Médicas
-import { Historias } from "../pages/Historias/index.tsx";
+// Facturas
+import { Facturas } from "../modules/Facturas/index.tsx";
+import { VerFacturas } from "../modules/Facturas/VerFacturas/index.tsx";
+import { RegistrarFactura } from "../modules/Facturas/RegistrarFactura/index.tsx";
+import { EditarFactura } from "../modules/Facturas/EditarFactura/index.tsx";
 
 export const AppRoutes = () => {
   return (
@@ -12,8 +15,12 @@ export const AppRoutes = () => {
       {/* Rendimiento */}
       <Route path="/rendimiento" element={<Rendimiento />} />
 
-      {/* Historias Médicas */}
-      <Route path="/historias" element={<Historias />}></Route>
+      {/* Facturas */}
+      <Route path="/facturas" element={<Facturas />}>
+        <Route path="ver-facturas" element={<VerFacturas />}></Route>
+        <Route path="registrar-factura" element={<RegistrarFactura />}></Route>
+        <Route path="editar-factura" element={<EditarFactura />}></Route>
+      </Route>
     </Routes>
   );
 };

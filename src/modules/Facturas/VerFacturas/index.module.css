@@ -24,7 +24,7 @@
 /* Búsqueda y Filtros */
 
 /* Input de Búsqueda */
-.searchHistory {
+.searchBill {
   display: flex;
   flex-direction: column;
   justify-content: center;

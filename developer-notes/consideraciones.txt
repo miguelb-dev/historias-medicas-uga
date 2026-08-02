@@ -1,0 +1,13 @@
+# Consideraciones
+
+## Generales
+
+- Por cada Historia Médica pueden haber varias facturas (aunque casi siempre es solo una factura por historia).
+
+- Las Historias están asociadas es a facturas PROCESADAS (o sea, facturas buenas), Si son ANULADA no sirve. En tal caso de que una factura anteriormente estaba como PROCESADA y por ende tenía una historia asociada, y se cambió a ANULADA o DEVOLUCION, la historia tiene que apuntar ahora a la Factura correcta (asi que el sistema tiene que permitir modificar la factura a la que apunta la historia médica).
+
+- Sorelys se basa es en las facturas, ella las anota TODAS, las PROCESADA, ANULADA y DEVOLUCION. Y anota toda la data de las PROCESADAS, de las ANULADA y DEVUELTA, solo anota el código de la Factura y el código del control (Asi que todos los demás campos deben ser opcionales)
+
+- Un paciente puede tener varias historias médicas (y una historia médica está asociada a un solo paciente). O sea, si el paciente llega, se le abre una historia médica, si se va, se cierra. Si vuelve se le tiene que abrir una nueva, y así sucesivamente
+
+- Las notas de crédito sirven para pagar las facutaras erradas (no son una nueva factura, son solo para saldar la deuda). Una vez hecha la nota de crédito, se hace la factura buena.

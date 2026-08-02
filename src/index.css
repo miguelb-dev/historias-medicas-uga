@@ -7,16 +7,15 @@
 
 :root {
   /* Colores principales de Interfaz */
-  --color-azul-marino: #092e79e4;
+  --color-azul-marino: rgb(53, 116, 211);
   --color-azul-oscuro: #2d5a8c;
   --color-blanco: #ffffff;
-  --color-gris-claro: #e8e9ea;
-  --color-gris-medio: #cbd5e1;
-  --color-gris-oscuro: #c7c7c7;
+  --color-gris-claro: #e0eaf3;
+  --color-gris-oscuro: #959596;
   --color-gris-muy-oscuro: #4e4e4e;
 
   /* Colores de acciones */
-  --color-azul: #1a55d4e6;
+  --color-azul: rgb(53, 116, 211);
   --color-negro: #161616;
   --color-rojo-error: #dc2626;
   --color-verde-exito: #10b981;
@@ -52,6 +51,7 @@ body {
 #main {
   grid-area: main;
   background-color: var(--color-gris-claro);
+  padding: 2rem;
 }
 
 #footer {

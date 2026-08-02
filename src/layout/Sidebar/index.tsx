@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styles from "./sidebar.module.css";
 
 export const Sidebar = () => {
@@ -6,10 +6,10 @@ export const Sidebar = () => {
     <nav className={styles.sidebar} id="sidebar">
       <ul>
         <li>
-          <Link to="/rendimiento">Rendimiento</Link>
+          <NavLink to="/rendimiento">Rendimiento</NavLink>
         </li>
         <li>
-          <Link to="/historias">Historias Médicas</Link>
+          <NavLink to="/facturas">Facturas</NavLink>
         </li>
       </ul>
     </nav>

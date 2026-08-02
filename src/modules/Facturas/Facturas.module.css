@@ -1,0 +1,49 @@
+.menu {
+  margin: auto;
+  width: 80%;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.option {
+  width: 350px;
+  height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 1rem;
+  background-color: var(--color-blanco);
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.option:hover {
+  transform: translateY(-8px);
+  border-color: #2563eb;
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.15);
+}
+
+.option svg {
+  margin-bottom: 1rem;
+  color: var(--color-azul);
+}
+
+.optionTitle {
+  color: var(--color-negro);
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.optionDescription {
+  color: #6b7280;
+  font-size: 0.9rem;
+}

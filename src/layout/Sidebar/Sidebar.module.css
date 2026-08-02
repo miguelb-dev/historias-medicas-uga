@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 2rem;
-  background-color: var(--color-gris-oscuro);
+  background-color: var(--color-blanco);
   padding: 1.4rem 1.2rem;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
 }

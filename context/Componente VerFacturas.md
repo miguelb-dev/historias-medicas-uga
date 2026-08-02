@@ -1,8 +1,8 @@
-# Módulo de Historias Médicas
+# Sub Módulo de Ver Facturas
 
 ## Descripción del módulo
 
-Es un componente llamarado Historias.tsx. Dicho componente es basicamente como un panel para la vista de las historias médicas. O sea es un section con la clase historiasRegistradas, con un section y un table.
+Es un componente llamarado VerFacturas.tsx. Dicho componente es basicamente como un panel para la vista de las historias médicas. O sea es un section con la clase historiasRegistradas, con un section y un table.
 
 - El section hijo debe tener:
   1. Un input para buscar una historia en base a los nombres y apellidos del paciente (por ahora solo pon el input, no lo hagas funcional).

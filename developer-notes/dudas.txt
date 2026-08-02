@@ -1,9 +1,3 @@
-## Dudas
+Dudas
 
-- Por cada Historia Médica hay una factura y solo una factura (y por ende, las facturas se pueden saldar a través de varios recibos), o pueden haber varias facturas por cada historia médica? -> De ser el caso de que solo exista una factura por historia y que la factura se pueda saldar con varios recibos, tendría que cambiar la relación de Historia:Factura a 1:1, y crear una nueva tabla llamada Recibo, y asociarla a Factura como Factura:Recibo con relación 1:N
-
-- Cómo hacen al momento de enumerar una historia médica?, ya que se supone que cada historia está asociada a una o más facturas. Entonces asocian las historias médicas con  facturas PROCESADAS solamente?, o toman en cuenta tanto las PROCESADAS como las ANULADAS para asociarlas a las historias?
-
-- Cómo es exactamente el proceso, cómo sabe Sorelys qué tiene que anotar, las facturas o las historias en si?. O sea de qué seguía para saber si tiene trabajo pendiente por hacer?
-
-- Un paciente puede tener varias historias médicas?, o es una sola por paciente y simplemente le van metiendo cosas a la historia?
+- Preguntar si el campo Tipo de Ingreso y Forma de Pago son lo mismo, o sea, si se puede dejar uno solo, ya que noto que todos los registros en el exel tienen el mismo valor.

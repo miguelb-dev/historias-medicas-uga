@@ -1,5 +1,6 @@
 import { DatosEmpresa } from "../../components/DatosEmpresa";
 import styles from "./Header.module.css";
+import logo from "../../assets/images/historia-medica.png";
 
 export const Header = () => {
   return (
@@ -7,7 +8,7 @@ export const Header = () => {
       <div className={styles.softwareData}>
         <img
           className={styles.logo}
-          src="/public/favicon.svg"
+          src={logo}
           alt="Logo del Software de Historias Médicas"
         />
         <div className={styles.softwareNameWrapper}>

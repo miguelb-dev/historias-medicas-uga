@@ -1,4 +1,4 @@
--- Políticas públicas temporales para que funcione mi CRUD
+-- Políticas públicas temporales para que funcione el CRUD
 
 
 -- Para la tabla medico

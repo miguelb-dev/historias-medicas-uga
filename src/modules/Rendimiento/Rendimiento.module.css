@@ -1,8 +1,6 @@
 .pageSection {
-  padding: 2rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 1rem;
-  min-height: calc(100vh - 5rem);
 }
 
 .pageSection h2 {
