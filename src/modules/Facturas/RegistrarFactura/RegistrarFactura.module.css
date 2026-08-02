@@ -1,9 +1,9 @@
 .form {
-  background-color: var(--color-blanco);
   width: 85%;
   padding: 2.5rem;
+  background-color: var(--color-blanco);
   border-radius: 20px;
-  margin: 0 auto 9rem;
+  margin: auto;
 }
 
 .formTitle {

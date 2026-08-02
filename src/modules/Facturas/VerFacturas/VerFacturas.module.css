@@ -1,0 +1,380 @@
+.facturas {
+  width: 85%;
+  padding: 2rem;
+  background-color: var(--color-blanco);
+  border-radius: 20px;
+  margin: 0 auto 9rem;
+  overflow: hidden; /* Asegura que el contenido no se salga */
+}
+
+.facturasTitle {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  color: #1a1a2e;
+  margin-bottom: 4rem;
+}
+
+/* === Panel de Control === */
+.controlPanel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem 0;
+}
+
+/* Búsqueda */
+.search {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+}
+.searchCriterionWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.searchCriterion {
+  align-self: center;
+}
+.searchValue {
+  flex: 1;
+  flex-basis: 200px;
+  min-width: 150px; /* Evita que se encoja demasiado */
+}
+.searchInput {
+  width: 100%;
+  min-width: 120px; /* Ancho mínimo para el input */
+}
+.searchButton {
+  width: min-content;
+  margin: auto;
+  padding: 0.6rem 1.2rem;
+  background: var(--color-azul);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
+.searchButton:hover {
+  background: rgb(41, 91, 165);
+}
+.clearButton {
+  width: min-content;
+  margin: auto;
+  padding: 0.6rem 1.2rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.clearButton:hover {
+  background: #c82333;
+}
+
+/* Filtro */
+.filter {
+  margin-left: 1rem;
+  flex-basis: 230px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.filter > label {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Ordenamiento */
+.sorting {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+/* Paginación */
+.pagination {
+  flex: 1;
+}
+
+/* Estilos para los Inputs y Select */
+.input,
+.select {
+  border: 2px solid #e0e0e0;
+  padding: 1rem 0.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--color-black);
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-azul);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.input:hover,
+.select:hover {
+  border-color: var(--color-azul);
+}
+
+/* Botones Principales */
+.mainButtons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Paginación */
+.pagination {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-black);
+}
+
+.pageButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.forwards,
+.backwards {
+  font-weight: bold;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid rgb(71, 71, 71);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.forwards:hover,
+.backwards:hover {
+  border: 1px solid rgb(71, 71, 71);
+  background: rgba(81, 78, 78, 0.559);
+}
+
+/* === Tabla === */
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto; /* Permite scroll horizontal en la tabla */
+  margin-top: 3rem;
+  border: 1px solid var(--color-gris-medio);
+}
+
+.table {
+  width: 100%;
+  min-width: 900px; /* Ancho mínimo para mantener legibilidad */
+  border-collapse: collapse;
+  text-align: center;
+  table-layout: auto; /* Cambiado de fixed a auto para mejor adaptación */
+}
+
+.table th,
+.table td {
+  border: 2px solid #dee2e6;
+}
+
+/* Estilos para columnas específicas */
+
+/* Código factura */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  min-width: 100px;
+}
+/* Código control */
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  min-width: 120px;
+}
+
+/* Nro. Historia */
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  min-width: 100px;
+}
+
+/* Cédula */
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  min-width: 120px;
+}
+
+/* Titular */
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  min-width: 200px;
+}
+
+/* Estatus */
+.table th:nth-child(8),
+.table td:nth-child(8) {
+  min-width: 130px;
+}
+
+/* Fecha */
+.table th:nth-child(9),
+.table td:nth-child(9) {
+  min-width: 120px;
+}
+
+thead {
+  background-color: var(--color-azul-marino);
+  color: var(--color-blanco);
+}
+
+thead th {
+  font-weight: bold;
+  padding: 1rem 0.5rem;
+  font-size: 1rem;
+  white-space: nowrap; /* Evita que el texto del header se rompa */
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--color-gris-medio);
+}
+
+tbody tr:hover {
+  transition: background 0.2s;
+  background-color: var(--color-gris-claro);
+}
+
+tbody td {
+  padding: 0.8rem 0.5rem;
+  font-size: 0.9rem; /* Reducido ligeramente para mejor ajuste */
+  word-break: break-word; /* Permite que palabras largas se rompan */
+}
+
+/* Estilos para estado de la tabla */
+.loading,
+.noStatusSelected,
+.noData {
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-gris-oscuro);
+}
+
+.noData {
+  height: 100px;
+}
+
+/* Estilos para el estado de la factura */
+.status {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status.procesada {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status.anulada {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status.nota_de_credito {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 1024px) {
+  .facturas {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .search {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .searchCriterionWrapper {
+    width: 100%;
+  }
+
+  .searchValue {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .searchButton,
+  .clearButton {
+    width: 100%;
+  }
+
+  .filter {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+
+  .sorting {
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+
+  .pagination {
+    flex-basis: 100%;
+  }
+
+  .tableWrapper {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .facturas {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .facturasTitle {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.8rem;
+  }
+
+  .table th:nth-child(2),
+  .table td:nth-child(2),
+  .table th:nth-child(4),
+  .table td:nth-child(4),
+  .table th:nth-child(7),
+  .table td:nth-child(7) {
+    min-width: 80px;
+  }
+
+  .status {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}

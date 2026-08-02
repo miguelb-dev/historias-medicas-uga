@@ -1,10 +1,17 @@
+import { EncabezadoModulo } from "../../components/EncabezadoModulo/index.";
 import styles from "./Rendimiento.module.css";
 
 export const Rendimiento = () => {
   return (
-    <section className={styles.pageSection}>
-      <h2>Rendimiento</h2>
-      <p>Proceso no disponible...</p>
-    </section>
+    <>
+      <EncabezadoModulo
+        title="Rendimiento"
+        description="Análisis de los ingresos de la Clínica UGA"
+      ></EncabezadoModulo>
+
+      <section className={styles.rendimiento}>
+        <h2 className={styles.rendimientoTitle}>Proceso no disponible</h2>
+      </section>
+    </>
   );
 };

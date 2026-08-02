@@ -1,14 +1,9 @@
-.pageSection {
+.rendimiento {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 1rem;
 }
 
-.pageSection h2 {
-  margin-bottom: 1rem;
-  color: var(--color-primary);
-}
-
-.pageSection p {
-  color: var(--color-on-surface);
-  line-height: 1.6;
+.rendimientoTitle {
+  text-align: center;
+  color: var(--color-gris-muy-oscuro);
 }

@@ -51,7 +51,7 @@ body {
 #main {
   grid-area: main;
   background-color: var(--color-gris-claro);
-  padding: 2rem;
+  padding: 2rem 2rem 11rem;
 }
 
 #footer {

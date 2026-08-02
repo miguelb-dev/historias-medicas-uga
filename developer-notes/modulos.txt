@@ -1,0 +1,65 @@
+### Módulo - Agregar Factura
+
+Debe ser un Formulario de Factura donde se añada todo.
+
+  - Registrar los datos de la Factura
+  - Asignar o Registrar un Paciente
+  - Asignar un Médico
+  - Asignar o Registrar una Historia Médica
+  - verificar que si es una factura ANULADA o NOTA DE CREDITO no se asocie una historia médica.
+
+
+
+### Módulo - Ver Facturas
+
+ Un listado para ver todas las facturas registradas en el sistema. Para controlarlo, utilizaremos el siguiente panel de control.
+
+- Criterio (select): id_factura, id_historia, cedula_paciente         *___* (input para colocar el dato en base a ese criterio)       Buscar (botón)
+
+- Mostrar (checkbox de radio): [] Facturas PROCESADAS, [] Facturas ANULADAS, [] Notas de Crédito --> Esto es para filtrar la búsqueda, o sea por si no quier ver ciertas facturas
+
+- Paginación: Intervalos de máximo 50 items, con un botón de atrás y siguiente
+
+- Facturas: Tabla con los campos de *...* de cada registro 
+
+
+### Módulo - Editar Factura
+
+Partimos desde Ver Facturas: el usuario al darle click a una factura, se redirije al Formulario de Editar Factura, donde estarán cargados todos los datos (o sea, se hará una petición fetch a la base de datos para obtener todos los datos del id_de de la factura clickeada)
+
+  - Editar los datos de la Factura
+  - No se pueden editar los datos del paciente
+  - No se pueden editar los datos del médico
+  - No se pueden editar los datos de la historia, pero si reasignar una historia
+
+
+
+
+
+
+
+
+
+---
+
+
+### Módulo - Registrar Médico
+
+El usuario registrar un médico.
+
+
+
+### Módulo - Editar Médico
+
+El usuario busca y editar los datos personales de un médico
+
+
+
+
+
+---
+
+
+### Módulo - Editar Paciente
+
+El usuario busca y edita los datos personales de un paciente

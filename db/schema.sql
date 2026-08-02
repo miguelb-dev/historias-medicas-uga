@@ -1,4 +1,4 @@
--- Base de Datos compatible con PostgreSQL
+-- Base de Datos en PostgreSQL
 
 -- Tabla para los Médicos
 CREATE TABLE medico (
@@ -33,8 +33,8 @@ CREATE TABLE historia (
     diagnostico TEXT,
     cirugia VARCHAR(2) CHECK (cirugia IN ('SI', 'NO')),
     tipo_cirugia VARCHAR(50) CHECK (tipo_cirugia IN ('HOSPITALIZACION', 'PLAN CRG', 'PLAN URL', 'PLAN OFT')),
-    CONSTRAINT fk_historia_medico FOREIGN KEY (cedula_medico) REFERENCES medico (cedula_medico),
-    CONSTRAINT fk_historia_paciente FOREIGN KEY (cedula_paciente) REFERENCES paciente (cedula_paciente)
+    CONSTRAINT fk_historia_medico FOREIGN KEY (cedula_medico) REFERENCES medico (cedula_medico) ON UPDATE CASCADE,
+    CONSTRAINT fk_historia_paciente FOREIGN KEY (cedula_paciente) REFERENCES paciente (cedula_paciente) ON UPDATE CASCADE
 );
 
 
@@ -53,7 +53,6 @@ CREATE TABLE factura (
     honorarios_medicos_y_servicios_auxiliares DECIMAL(20, 4),
     tasa_dolar_bcv DECIMAL(20, 4),
     estatus VARCHAR(20) CHECK (estatus IN ('PROCESADA', 'ANULADA', 'NOTA DE CREDITO')),
-    nota_credito VARCHAR(20),
     motivo TEXT NULL, -- * Solo es diferente a NULL si estatus es ANULADA o NOTA DE CREDITO
     CONSTRAINT fk_factura_historia FOREIGN KEY (id_historia) REFERENCES historia (id_historia)
 );

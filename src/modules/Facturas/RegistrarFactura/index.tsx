@@ -9,7 +9,7 @@ import {
   guardarPaciente,
   guardarHistoria,
   guardarFactura,
-} from "../../../services/facturaService";
+} from "../../../services/Facturas/registrarFacturaService";
 
 interface Medico {
   cedula_medico: number;
@@ -532,9 +532,7 @@ export const RegistrarFactura = () => {
         {/* Motivo de la Anulación / Nota de Crédito */}
         {mostrarMotivo && (
           <div className={styles.inputWrapper}>
-            <label htmlFor="motivo">
-              Motivo de la Anulación / Nota de Crédito
-            </label>
+            <label htmlFor="motivo">Motivo</label>
             <textarea
               id="motivo"
               rows={5}

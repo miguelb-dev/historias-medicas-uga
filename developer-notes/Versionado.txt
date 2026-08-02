@@ -1,12 +1,14 @@
 v1.0.O
 
 1. Base de Datos.
-2. CRUD de Historias Médicas.
-3. Dashboard Estadístico.
+2. CRUD de Facturas.
+3. Análisis de Rendimiento.
 4. Sign-In.
 
 
 v1.1.0
 
 1. Generador de Exel y/o PDF
-2. Control de Usuario
+2. CRUD de Médicos
+3. Módulo - Control de Usuarios
+4. Módulo - Editar Paciente

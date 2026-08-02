@@ -1,4 +1,4 @@
-import { supabaseRequest } from "./supabaseClient";
+import { supabaseRequest } from "../supabaseClient";
 
 // Buscar paciente por cédula
 export const buscarPaciente = async (cedula: string) => {
@@ -93,7 +93,6 @@ export const guardarFactura = async (factura: any) => {
       tasa_dolar_bcv: formatearNumero(factura.tasa_dolar_bcv),
       estatus: factura.estatus,
       motivo: factura.motivo || null,
-      nota_credito: null,
     };
 
     const data = await supabaseRequest("factura", {

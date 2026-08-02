@@ -1,1 +1,0 @@
-Ahora bien, al momento de darle click a un registro de la table, debe aparecer el mismo formulario pero ahora debe decir Editar Historia. Asi el usuario puede editar los datos. Pero para que se obtengan los datos de la historia que quiere editar, se debe guardar el Código de la historia que clickeo, y asi
