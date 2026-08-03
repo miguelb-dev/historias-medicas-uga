@@ -1,0 +1,7 @@
+Hubo un error en una factura:
+
+- Se registran los datos de la factura de papel a digital.
+- Se marca el número de la historia en papel
+- Se repite el proceso N cantidad de veces.
+- Descubren que hubo un problema con una factura de una historia.
+- Cambian los datos de la factura en el sistema, y de ser necesario también en el papel.

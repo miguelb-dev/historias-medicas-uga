@@ -66,7 +66,7 @@
   width: min-content;
   margin: auto;
   padding: 0.6rem 1.2rem;
-  background: #dc3545;
+  background: gray;
   color: white;
   border: none;
   border-radius: 8px;
@@ -75,7 +75,7 @@
   white-space: nowrap;
 }
 .clearButton:hover {
-  background: #c82333;
+  background-color: rgb(109, 106, 106);
 }
 
 /* Filtro */

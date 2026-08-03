@@ -1,7 +1,9 @@
 v1.0.O
 
 1. Base de Datos.
-2. CRUD de Facturas.
+2. Facturas (VER, AGREGAR, EDITAR).
+5. Historias (EDITAR).
+6. Paciente (EDITAR).
 3. Análisis de Rendimiento.
 4. Sign-In.
 
@@ -9,6 +11,5 @@ v1.0.O
 v1.1.0
 
 1. Generador de Exel y/o PDF
-2. CRUD de Médicos
-3. Módulo - Control de Usuarios
-4. Módulo - Editar Paciente
+2. Médicos (AGREGAR, EDITAR)
+3. Usuarios (VER, AGREGAR, EDITAR)

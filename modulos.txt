@@ -30,7 +30,6 @@ Partimos desde Ver Facturas: el usuario al darle click a una factura, se redirij
   - Editar los datos de la Factura
   - No se pueden editar los datos del paciente
   - No se pueden editar los datos del médico
-  - No se pueden editar los datos de la historia, pero si reasignar una historia
 
 
 

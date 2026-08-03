@@ -54,38 +54,48 @@ export const facturaService = {
 
     // Filtros de estatus
     if (estatus.length > 0) {
-      // Para múltiples estatus, usamos la sintaxis: estatus=in.(PROCESADA,ANULADA,"NOTA DE CREDITO")
       const statusValues = estatus
         .map((s) => {
-          // Si tiene espacios, lo envolvemos en comillas dobles
           if (s.includes(" ")) {
             return `"${s}"`;
           }
           return s;
         })
         .join(",");
-
       conditions.push(`estatus=in.(${statusValues})`);
     }
 
-    // Búsqueda por criterio
+    // Búsqueda por criterio - COINCIDENCIA EXACTA (eq)
     if (searchCriterion && searchValue) {
-      const searchTerm = `%${searchValue}%`;
+      // Eliminar espacios en blanco al inicio y final
+      const cleanValue = searchValue.trim();
 
       switch (searchCriterion) {
         case "id_factura":
-          conditions.push(`id_factura=ilike.${searchTerm}`);
+          // id_factura es VARCHAR - búsqueda exacta con eq
+          conditions.push(`id_factura=eq.${encodeURIComponent(cleanValue)}`);
           break;
         case "id_historia":
-          if (/^\d+$/.test(searchValue)) {
-            conditions.push(`id_historia=eq.${searchValue}`);
+          // id_historia es INTEGER - validamos que sea número
+          if (/^\d+$/.test(cleanValue)) {
+            conditions.push(`id_historia=eq.${cleanValue}`);
+          } else {
+            // Si no es número, no agregamos condición (no encontrará nada)
+            console.warn("El valor para id_historia debe ser un número");
           }
           break;
         case "cedula_paciente":
-          // Para filtrar por cédula del paciente
-          conditions.push(
-            `historia.paciente.cedula_paciente=ilike.${searchTerm}`,
-          );
+          // cedula_paciente es INTEGER - validamos que sea número
+          if (/^\d+$/.test(cleanValue)) {
+            conditions.push(
+              `historia.paciente.cedula_paciente=eq.${cleanValue}`,
+            );
+          } else {
+            // Si no es número, no agregamos condición (no encontrará nada)
+            console.warn(
+              "El valor para cédula del paciente debe ser un número",
+            );
+          }
           break;
       }
     }
@@ -100,6 +110,8 @@ export const facturaService = {
 
     // Paginación
     url += `&limit=${limit}&offset=${offset}`;
+
+    console.log("URL completa:", url);
 
     // Obtener datos con paginación
     const data = (await supabaseRequest(url)) as Factura[];
@@ -123,21 +135,25 @@ export const facturaService = {
       }
 
       if (searchCriterion && searchValue) {
-        const searchTerm = `%${searchValue}%`;
+        const cleanValue = searchValue.trim();
 
         switch (searchCriterion) {
           case "id_factura":
-            countConditions.push(`id_factura=ilike.${searchTerm}`);
+            countConditions.push(
+              `id_factura=eq.${encodeURIComponent(cleanValue)}`,
+            );
             break;
           case "id_historia":
-            if (/^\d+$/.test(searchValue)) {
-              countConditions.push(`id_historia=eq.${searchValue}`);
+            if (/^\d+$/.test(cleanValue)) {
+              countConditions.push(`id_historia=eq.${cleanValue}`);
             }
             break;
           case "cedula_paciente":
-            countConditions.push(
-              `historia.paciente.cedula_paciente=ilike.${searchTerm}`,
-            );
+            if (/^\d+$/.test(cleanValue)) {
+              countConditions.push(
+                `historia.paciente.cedula_paciente=eq.${cleanValue}`,
+              );
+            }
             break;
         }
       }
@@ -145,6 +161,8 @@ export const facturaService = {
       if (countConditions.length > 0) {
         countUrl += `&${countConditions.join("&")}`;
       }
+
+      console.log("Count URL:", countUrl);
 
       const countResponse = await supabaseRequest(countUrl);
       if (Array.isArray(countResponse) && countResponse.length > 0) {
@@ -185,21 +203,23 @@ export const facturaService = {
     }
 
     if (searchCriterion && searchValue) {
-      const searchTerm = `%${searchValue}%`;
+      const cleanValue = searchValue.trim();
 
       switch (searchCriterion) {
         case "id_factura":
-          conditions.push(`id_factura=ilike.${searchTerm}`);
+          conditions.push(`id_factura=eq.${encodeURIComponent(cleanValue)}`);
           break;
         case "id_historia":
-          if (/^\d+$/.test(searchValue)) {
-            conditions.push(`id_historia=eq.${searchValue}`);
+          if (/^\d+$/.test(cleanValue)) {
+            conditions.push(`id_historia=eq.${cleanValue}`);
           }
           break;
         case "cedula_paciente":
-          conditions.push(
-            `historia.paciente.cedula_paciente=ilike.${searchTerm}`,
-          );
+          if (/^\d+$/.test(cleanValue)) {
+            conditions.push(
+              `historia.paciente.cedula_paciente=eq.${cleanValue}`,
+            );
+          }
           break;
       }
     }
@@ -235,21 +255,23 @@ export const facturaService = {
     }
 
     if (searchCriterion && searchValue) {
-      const searchTerm = `%${searchValue}%`;
+      const cleanValue = searchValue.trim();
 
       switch (searchCriterion) {
         case "id_factura":
-          conditions.push(`id_factura=ilike.${searchTerm}`);
+          conditions.push(`id_factura=eq.${encodeURIComponent(cleanValue)}`);
           break;
         case "id_historia":
-          if (/^\d+$/.test(searchValue)) {
-            conditions.push(`id_historia=eq.${searchValue}`);
+          if (/^\d+$/.test(cleanValue)) {
+            conditions.push(`id_historia=eq.${cleanValue}`);
           }
           break;
         case "cedula_paciente":
-          conditions.push(
-            `historia.paciente.cedula_paciente=ilike.${searchTerm}`,
-          );
+          if (/^\d+$/.test(cleanValue)) {
+            conditions.push(
+              `historia.paciente.cedula_paciente=eq.${cleanValue}`,
+            );
+          }
           break;
       }
     }
