@@ -13,6 +13,19 @@ export const buscarPaciente = async (cedula: string) => {
   }
 };
 
+// Buscar historia médica por ID
+export const buscarHistoria = async (idHistoria: string) => {
+  try {
+    const data = await supabaseRequest(
+      `historia?id_historia=eq.${idHistoria}&select=*,medico(cedula_medico,nombres,apellidos),paciente(cedula_paciente,nombres,apellidos)`,
+    );
+    return data.length > 0 ? data[0] : null;
+  } catch (error) {
+    console.error("Error buscando historia:", error);
+    return null;
+  }
+};
+
 // Obtener todos los médicos activos
 export const obtenerMedicos = async () => {
   try {
@@ -71,7 +84,7 @@ export const guardarFactura = async (factura: any) => {
       if (valor === null || valor === undefined || valor === "") return 0;
       const num = typeof valor === "string" ? parseFloat(valor) : valor;
       if (isNaN(num)) return 0;
-      return Math.round(num * 10000) / 10000; // Redondear a 4 decimales
+      return Math.round(num * 10000) / 10000;
     };
 
     const facturaFormateada = {

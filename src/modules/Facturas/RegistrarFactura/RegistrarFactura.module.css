@@ -42,9 +42,18 @@ legend {
 
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 
-  /* * Garantiza que todos los campos tengan un ancho similar */
+  gap: 0.5rem;
+}
+/* Estilos específicos para los campos de búsqueda */
+.search {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.search input {
+  flex-grow: 1;
 }
 
 label {
@@ -94,10 +103,10 @@ textarea {
   cursor: not-allowed;
 }
 
-/* Botón de búsqueda */
-.searchButton {
+/* Botón de búsqueda y de limpieza */
+.searchButton,
+.clearButton {
   width: min-content;
-  margin: auto;
   padding: 0.6rem 1.2rem;
   background: var(--color-azul);
   color: white;
@@ -108,6 +117,12 @@ textarea {
 }
 .searchButton:hover {
   background: rgb(41, 91, 165);
+}
+.clearButton {
+  background: gray;
+}
+.clearButton:hover {
+  background-color: rgb(109, 106, 106);
 }
 
 /* === BOTONES DE ACCIÓN === */

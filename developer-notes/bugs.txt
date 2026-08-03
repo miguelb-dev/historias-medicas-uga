@@ -1,0 +1,3 @@
+- En el formulario de Crear Factura, al momento de asignar una factura, no termiran de cargarse algunos datos del paciente.
+
+- Quizás sea mejor un solo botón para limpiar TODO, y colocarlo en la parte de arriba del formulario.

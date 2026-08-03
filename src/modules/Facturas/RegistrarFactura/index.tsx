@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 /* Funciones para la conexión con la BBDD */
 import {
   buscarPaciente,
+  buscarHistoria,
   obtenerMedicos,
   guardarPaciente,
   guardarHistoria,
@@ -37,6 +38,9 @@ export const RegistrarFactura = () => {
     estatus: "PROCESADA",
     motivo: "",
 
+    // ID de Historia (para buscar)
+    id_historia_buscar: "",
+
     // Paciente
     cedula_paciente: "",
     nombres_paciente: "",
@@ -55,12 +59,21 @@ export const RegistrarFactura = () => {
     cirugia: "NO",
     tipo_cirugia: "",
   });
+
   const [medicos, setMedicos] = useState<Medico[]>([]);
   const [pacienteEncontrado, setPacienteEncontrado] = useState<any>(null);
+  const [historiaEncontrada, setHistoriaEncontrada] = useState<any>(null);
   const [mostrarMotivo, setMostrarMotivo] = useState(false);
   const [mostrarTipoCirugia, setMostrarTipoCirugia] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [buscandoPaciente, setBuscandoPaciente] = useState(false);
+  const [buscandoHistoria, setBuscandoHistoria] = useState(false);
+
+  // Estados para controlar mensajes de búsqueda
+  const [busquedaPacienteRealizada, setBusquedaPacienteRealizada] =
+    useState(false);
+  const [busquedaHistoriaRealizada, setBusquedaHistoriaRealizada] =
+    useState(false);
 
   // Cargar médicos al montar el componente
   useEffect(() => {
@@ -157,8 +170,10 @@ export const RegistrarFactura = () => {
     }
 
     setBuscandoPaciente(true);
+    setBusquedaPacienteRealizada(false);
     const paciente = await buscarPaciente(formData.cedula_paciente);
     setBuscandoPaciente(false);
+    setBusquedaPacienteRealizada(true);
 
     if (paciente) {
       setPacienteEncontrado(paciente);
@@ -181,6 +196,95 @@ export const RegistrarFactura = () => {
         direccion_paciente: "",
       }));
     }
+  };
+
+  // Limpiar datos del paciente
+  const handleLimpiarPaciente = () => {
+    setPacienteEncontrado(null);
+    setBusquedaPacienteRealizada(false);
+    setFormData((prev) => ({
+      ...prev,
+      cedula_paciente: "",
+      nombres_paciente: "",
+      apellidos_paciente: "",
+      fecha_nacimiento: "",
+      edad: 0,
+      direccion_paciente: "",
+    }));
+  };
+
+  // Buscar historia médica
+  const handleBuscarHistoria = async () => {
+    if (!formData.id_historia_buscar) {
+      alert("Ingresa un ID de historia");
+      return;
+    }
+
+    setBuscandoHistoria(true);
+    setBusquedaHistoriaRealizada(false);
+    const historia = await buscarHistoria(formData.id_historia_buscar);
+    setBuscandoHistoria(false);
+    setBusquedaHistoriaRealizada(true);
+
+    if (historia) {
+      setHistoriaEncontrada(historia);
+
+      // Cargar datos de la historia encontrada
+      setFormData((prev) => ({
+        ...prev,
+        fecha_ingreso: historia.fecha_ingreso || "",
+        fecha_egreso: historia.fecha_egreso || "",
+        diagnostico: historia.diagnostico || "",
+        cirugia: historia.cirugia || "NO",
+        tipo_cirugia: historia.tipo_cirugia || "",
+        cedula_medico: historia.cedula_medico?.toString() || "",
+        // Cargar datos del paciente asociado
+        cedula_paciente: historia.cedula_paciente?.toString() || "",
+        nombres_paciente: historia.paciente?.nombres || "",
+        apellidos_paciente: historia.paciente?.apellidos || "",
+        fecha_nacimiento: historia.paciente?.fecha_nacimiento || "",
+        edad: historia.paciente?.edad || 0,
+        direccion_paciente: historia.paciente?.direccion || "",
+      }));
+
+      // Marcar paciente como encontrado
+      if (historia.paciente) {
+        setPacienteEncontrado(historia.paciente);
+      }
+
+      // Mostrar tipo de cirugía si corresponde
+      if (historia.cirugia === "SI") {
+        setMostrarTipoCirugia(true);
+      }
+    } else {
+      setHistoriaEncontrada(null);
+    }
+  };
+
+  // Limpiar datos de la historia
+  const handleLimpiarHistoria = () => {
+    setHistoriaEncontrada(null);
+    setBusquedaHistoriaRealizada(false);
+    setMostrarTipoCirugia(false);
+    setFormData((prev) => ({
+      ...prev,
+      id_historia_buscar: "",
+      fecha_ingreso: "",
+      fecha_egreso: "",
+      diagnostico: "",
+      cirugia: "NO",
+      tipo_cirugia: "",
+      cedula_medico: "",
+      // También limpiamos los datos del paciente que se cargaron
+      cedula_paciente: "",
+      nombres_paciente: "",
+      apellidos_paciente: "",
+      fecha_nacimiento: "",
+      edad: 0,
+      direccion_paciente: "",
+    }));
+    setPacienteEncontrado(null);
+    setBusquedaPacienteRealizada(false);
   };
 
   // Manejar selección de médico
@@ -225,34 +329,6 @@ export const RegistrarFactura = () => {
       }
     }
 
-    // Si hay médico seleccionado pero NO hay cédula de paciente, mostrar advertencia
-    if (formData.cedula_medico && !formData.cedula_paciente) {
-      if (
-        !confirm(
-          "Seleccionaste un médico pero no hay paciente. ¿Deseas continuar?",
-        )
-      ) {
-        return false;
-      }
-    }
-
-    // Si hay datos de historia pero NO hay cédula de paciente, mostrar advertencia
-    if (
-      (formData.fecha_ingreso ||
-        formData.fecha_egreso ||
-        formData.diagnostico ||
-        formData.cirugia === "SI") &&
-      !formData.cedula_paciente
-    ) {
-      if (
-        !confirm(
-          "Ingresaste datos de historia médica pero no hay paciente. ¿Deseas continuar?",
-        )
-      ) {
-        return false;
-      }
-    }
-
     return true;
   };
 
@@ -269,9 +345,13 @@ export const RegistrarFactura = () => {
     try {
       let historiaId = null;
 
-      // 1. Si hay cédula de paciente, procesar paciente e historia
-      if (formData.cedula_paciente) {
-        // 1a. Si el paciente no existe, guardarlo
+      // 1. Si HAY ID de historia para buscar y se encontró, usar ese ID
+      if (formData.id_historia_buscar && historiaEncontrada) {
+        historiaId = Number(formData.id_historia_buscar);
+      }
+      // 2. Si NO se encontró historia o no se buscó, crear una nueva
+      else if (formData.cedula_paciente) {
+        // 2a. Si el paciente no existe, guardarlo
         if (!pacienteEncontrado) {
           await guardarPaciente({
             cedula_paciente: Number(formData.cedula_paciente),
@@ -283,37 +363,28 @@ export const RegistrarFactura = () => {
           });
         }
 
-        // 1b. Guardar historia médica (solo si hay datos o si hay médico)
-        const tieneDatosHistoria =
-          formData.fecha_ingreso ||
-          formData.fecha_egreso ||
-          formData.diagnostico ||
-          formData.cedula_medico ||
-          formData.cirugia === "SI";
+        // 2b. Guardar historia médica
+        const historiaData = {
+          cedula_medico: formData.cedula_medico
+            ? Number(formData.cedula_medico)
+            : null,
+          cedula_paciente: Number(formData.cedula_paciente),
+          fecha_ingreso: formData.fecha_ingreso || null,
+          fecha_egreso: formData.fecha_egreso || null,
+          diagnostico: formData.diagnostico || null,
+          cirugia: formData.cirugia,
+          tipo_cirugia:
+            formData.cirugia === "SI" ? formData.tipo_cirugia : null,
+        };
 
-        if (tieneDatosHistoria) {
-          const historiaData = {
-            cedula_medico: formData.cedula_medico
-              ? Number(formData.cedula_medico)
-              : null,
-            cedula_paciente: Number(formData.cedula_paciente),
-            fecha_ingreso: formData.fecha_ingreso || null,
-            fecha_egreso: formData.fecha_egreso || null,
-            diagnostico: formData.diagnostico || null,
-            cirugia: formData.cirugia,
-            tipo_cirugia:
-              formData.cirugia === "SI" ? formData.tipo_cirugia : null,
-          };
-
-          const historiaGuardada = await guardarHistoria(historiaData);
-          historiaId = historiaGuardada[0]?.id_historia;
-        }
+        const historiaGuardada = await guardarHistoria(historiaData);
+        historiaId = historiaGuardada[0]?.id_historia;
       }
 
-      // 2. Guardar factura (SIEMPRE)
+      // 3. Guardar factura (SIEMPRE)
       const facturaData = {
         id_factura: formData.id_factura,
-        id_historia: historiaId, // Puede ser null
+        id_historia: historiaId, // Puede ser null si no hay paciente
         codigo_control: formData.codigo_control,
         fecha_emision: formData.fecha_emision,
         titular: formData.titular || null,
@@ -333,13 +404,9 @@ export const RegistrarFactura = () => {
 
       alert("¡Factura registrada exitosamente!");
       navigate("/facturas");
-
-      // En caso de error
     } catch (error: any) {
       console.error("Error al guardar:", error);
       alert(`Error al guardar la factura: ${error.message}`);
-
-      // Terminar el envío
     } finally {
       setCargando(false);
     }
@@ -552,31 +619,54 @@ export const RegistrarFactura = () => {
         {/* Cédula del Paciente */}
         <div className={styles.inputWrapper}>
           <label htmlFor="cedula_paciente">Cédula</label>
-          <input
-            id="cedula_paciente"
-            type="text"
-            value={formData.cedula_paciente}
-            onChange={handleInputChange}
-            disabled={cargando || buscandoPaciente}
-          />
-          <button
-            className={styles.searchButton}
-            type="button"
-            onClick={handleBuscarPaciente}
-            disabled={cargando || buscandoPaciente || !formData.cedula_paciente}
-          >
-            {buscandoPaciente ? "Buscando..." : "Buscar"}
-          </button>
-          {pacienteEncontrado && (
-            <small style={{ color: "green" }}>✓ Paciente existente</small>
+          <div className={styles.search}>
+            <input
+              id="cedula_paciente"
+              type="text"
+              value={formData.cedula_paciente}
+              onChange={handleInputChange}
+              disabled={cargando || buscandoPaciente || !!historiaEncontrada}
+            />
+            <button
+              className={styles.searchButton}
+              type="button"
+              onClick={handleBuscarPaciente}
+              disabled={
+                cargando ||
+                buscandoPaciente ||
+                !formData.cedula_paciente ||
+                !!historiaEncontrada
+              }
+            >
+              {buscandoPaciente ? "Buscando..." : "Buscar"}
+            </button>
+            <button
+              className={styles.clearButton}
+              type="button"
+              onClick={handleLimpiarPaciente}
+              disabled={cargando || !!historiaEncontrada}
+            >
+              Limpiar
+            </button>
+          </div>
+          {/* Mostrar mensaje solo después de buscar */}
+          {busquedaPacienteRealizada && !buscandoPaciente && (
+            <>
+              {pacienteEncontrado ? (
+                <small style={{ color: "green", textAlign: "center" }}>
+                  ✓ Paciente encontrado
+                </small>
+              ) : (
+                <div style={{ textAlign: "center" }}>
+                  <small style={{ color: "orange" }}>
+                    ⚠ Paciente no encontrado
+                  </small>
+                  <br />
+                  <small style={{ color: "orange" }}>Se creará uno nuevo</small>
+                </div>
+              )}
+            </>
           )}
-          {formData.cedula_paciente &&
-            !pacienteEncontrado &&
-            !buscandoPaciente && (
-              <small style={{ color: "orange" }}>
-                ⚠ Paciente no encontrado - Se creará uno nuevo
-              </small>
-            )}
         </div>
 
         {/* Nombres del Paciente */}
@@ -587,7 +677,8 @@ export const RegistrarFactura = () => {
             type="text"
             value={formData.nombres_paciente}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
+            placeholder={historiaEncontrada ? "Cargado de la historia" : ""}
           />
         </div>
 
@@ -599,7 +690,8 @@ export const RegistrarFactura = () => {
             type="text"
             value={formData.apellidos_paciente}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
+            placeholder={historiaEncontrada ? "Cargado de la historia" : ""}
           />
         </div>
 
@@ -611,7 +703,7 @@ export const RegistrarFactura = () => {
             type="date"
             value={formData.fecha_nacimiento}
             onChange={handleFechaNacimiento}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
           />
         </div>
 
@@ -636,14 +728,15 @@ export const RegistrarFactura = () => {
             rows={5}
             value={formData.direccion_paciente}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
+            placeholder={historiaEncontrada ? "Cargado de la historia" : ""}
           />
         </div>
       </fieldset>
 
       {/* === DATOS DEL MÉDICO === */}
       <fieldset>
-        <legend>Datos del Médico</legend>
+        <legend>Datos del Médico </legend>
 
         {/* Cédula del Médico */}
         <div className={styles.inputWrapper}>
@@ -652,18 +745,21 @@ export const RegistrarFactura = () => {
             id="cedula_medico"
             onChange={handleMedicoChange}
             value={formData.cedula_medico}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
           >
-            <option value="">...</option>
-            {medicos.map((medico) => (
-              <option key={medico.cedula_medico} value={medico.cedula_medico}>
-                {medico.cedula_medico}
-              </option>
-            ))}
+            <option value="">
+              {historiaEncontrada ? "Cargado de la historia" : "..."}
+            </option>
+            {!historiaEncontrada &&
+              medicos.map((medico) => (
+                <option key={medico.cedula_medico} value={medico.cedula_medico}>
+                  {medico.cedula_medico}
+                </option>
+              ))}
           </select>
         </div>
 
-        {/* Nombre completo del Médico (solo para referencia del usuario) */}
+        {/* Nombre completo del Médico */}
         <div className={styles.inputWrapper}>
           <label htmlFor="nombre_medico">Nombres</label>
           <input
@@ -680,6 +776,57 @@ export const RegistrarFactura = () => {
       <fieldset>
         <legend>Datos de la Historia Médica</legend>
 
+        {/* Buscador de Historia */}
+        <div className={styles.inputWrapper}>
+          <label htmlFor="id_historia_buscar">Asinar Historia</label>
+          <div className={styles.search}>
+            <input
+              id="id_historia_buscar"
+              type="text"
+              value={formData.id_historia_buscar}
+              onChange={handleInputChange}
+              disabled={cargando || buscandoHistoria}
+            />
+            <button
+              className={styles.searchButton}
+              type="button"
+              onClick={handleBuscarHistoria}
+              disabled={
+                cargando || buscandoHistoria || !formData.id_historia_buscar
+              }
+            >
+              {buscandoHistoria ? "Buscando..." : "Buscar"}
+            </button>
+            <button
+              className={styles.clearButton}
+              type="button"
+              onClick={handleLimpiarHistoria}
+              disabled={cargando}
+            >
+              Limpiar
+            </button>
+          </div>
+          {/* Mostrar mensaje solo después de buscar */}
+          {busquedaHistoriaRealizada && !buscandoHistoria && (
+            <>
+              {historiaEncontrada ? (
+                <small style={{ color: "green", textAlign: "center" }}>
+                  ✓ Historia encontrada
+                </small>
+              ) : (
+                <div style={{ textAlign: "center" }}>
+                  <small style={{ color: "orange" }}>
+                    ⚠ Historia no encontrada
+                  </small>
+                  <br />
+                  <small style={{ color: "orange" }}>Se creará una nueva</small>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Campos de la historia */}
         <div className={styles.inputWrapper}>
           <label htmlFor="fecha_ingreso">Fecha de Ingreso</label>
           <input
@@ -687,7 +834,7 @@ export const RegistrarFactura = () => {
             type="date"
             value={formData.fecha_ingreso}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
           />
         </div>
 
@@ -698,7 +845,7 @@ export const RegistrarFactura = () => {
             type="date"
             value={formData.fecha_egreso}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
           />
         </div>
 
@@ -708,7 +855,7 @@ export const RegistrarFactura = () => {
             id="cirugia"
             onChange={handleCirugiaChange}
             value={formData.cirugia}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
           >
             <option value="NO">No</option>
             <option value="SI">Si</option>
@@ -722,7 +869,7 @@ export const RegistrarFactura = () => {
               id="tipo_cirugia"
               value={formData.tipo_cirugia}
               onChange={handleInputChange}
-              disabled={cargando}
+              disabled={cargando || !!historiaEncontrada}
             >
               <option value="">...</option>
               <option value="HOSPITALIZACION">HOSPITALIZACION</option>
@@ -740,7 +887,7 @@ export const RegistrarFactura = () => {
             rows={5}
             value={formData.diagnostico}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || !!historiaEncontrada}
           />
         </div>
       </fieldset>

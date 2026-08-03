@@ -12,7 +12,6 @@ export const VerFacturas = () => {
   // Estado para la carga de los datos
   const [facturas, setFacturas] = useState<Factura[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Estados para filtros y búsqueda
   const [searchCriterion, setSearchCriterion] = useState<
@@ -49,7 +48,6 @@ export const VerFacturas = () => {
   const loadFacturas = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
 
       const offset = (currentPage - 1) * recordsPerPage;
 
@@ -76,7 +74,6 @@ export const VerFacturas = () => {
       setTotalRecords(total);
       setTotalPages(Math.ceil(total / recordsPerPage));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al cargar facturas");
       console.error("Error cargando facturas:", err);
     } finally {
       setLoading(false);
@@ -343,7 +340,7 @@ export const VerFacturas = () => {
                     </td>
                     <td>{factura.historia?.paciente?.nombres || "N/A"}</td>
                     <td>{factura.historia?.paciente?.apellidos || "N/A"}</td>
-                    <td>{factura.titular}</td>
+                    <td>{factura.titular || "N/A"}</td>
                     <td>
                       <span
                         className={`${styles.status} ${styles[factura.estatus.toLowerCase().replace(" ", "_")]}`}
