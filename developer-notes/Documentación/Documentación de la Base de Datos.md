@@ -5,6 +5,8 @@
 - medico
 - paciente
 - historia
+- empresa
+- seguro
 - factura
 
 ## Relaciones entre las tablas
@@ -12,10 +14,10 @@
 - medico --> historia (1:N)
 - paciente --> historia (1:N)
 - historia --> factura (1:N)
+- empresa --> factura (1:N)
+- seguro --> factura (1:N)
 
 ## Preguntas Frecuentes
-
-- ¿Por qué hay tantas tablas?: Aunque los usuarios quieren trabajar nada más con Historias Médicas. Para no romper con la Tercera Forma Normal, he decido crear 4 tablas, Historia (que es la principal y la cual conecta con las demás), Paciente, Medico y Factura. Es decir, el usuario rellena los más de 20 campos de una historia médica, y es el backend en cuestión el que distribuye toda la data a la Base de Datos (BBDD).
 
 - ¿Por qué VARCHAR como tipo de dato para las claves primarias/foráneas?: Así podemos aceptar códigos que empiecen con ceros, sin mencionar que aceptaría tanto códigos numéricos como 00356, 00357, etc. Hasta con letras, como B00222, B000223,etc. Es más flexible y menos propenso a errores si los usuarios quieren colocar códigos diferentes.
 

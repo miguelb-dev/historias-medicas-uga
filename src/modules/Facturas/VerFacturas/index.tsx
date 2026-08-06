@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./VerFacturas.module.css";
 import type {
   Factura,
@@ -7,6 +8,8 @@ import type {
 import { facturaService } from "../../../services/Facturas/verFacturasService";
 
 export const VerFacturas = () => {
+  const navigate = useNavigate();
+
   /* === VARIABLES DE ESTADO === */
 
   // Estado para la carga de los datos
@@ -156,6 +159,28 @@ export const VerFacturas = () => {
 
   // Verificar si hay estatus seleccionados
   const hasSelectedStatus = selectedStatus.length > 0;
+
+  // Navegar a editar factura
+  const handleRowClick = (idFactura: string) => {
+    navigate(`/facturas/editar-factura?id=${idFactura}`);
+  };
+
+  // Función para obtener el titular mostrado
+  const getTitularMostrado = (factura: Factura) => {
+    if (factura.titular) return factura.titular;
+    if (factura.empresa?.nombre) return factura.empresa.nombre;
+    if (factura.seguro?.nombre) return factura.seguro.nombre;
+    if (factura.nuevo_titular) return factura.nuevo_titular;
+    return "N/A";
+  };
+
+  // Función para obtener el tipo de ingreso mostrado
+  const getTipoIngresoMostrado = (factura: Factura) => {
+    if (factura.empresa) return "EMPRESA";
+    if (factura.seguro) return "SEGURO";
+    if (factura.tipo_ingreso) return factura.tipo_ingreso;
+    return "N/A";
+  };
 
   /* === RENDERIZADO === */
   return (
@@ -311,13 +336,14 @@ export const VerFacturas = () => {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Código de la Factura</th>
-                <th>Código del Control</th>
+                <th>Código Factura</th>
+                <th>Código Control</th>
                 <th>Nro. Historia</th>
                 <th>Cédula (Paciente)</th>
                 <th>Nombres</th>
                 <th>Apellidos</th>
                 <th>Titular</th>
+                <th>Tipo Ingreso</th>
                 <th>Estatus</th>
                 <th>Fecha Emisión</th>
               </tr>
@@ -325,13 +351,18 @@ export const VerFacturas = () => {
             <tbody>
               {facturas.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className={styles.noData}>
+                  <td colSpan={10} className={styles.noData}>
                     No se encontraron facturas con los filtros seleccionados
                   </td>
                 </tr>
               ) : (
                 facturas.map((factura) => (
-                  <tr key={factura.id_factura}>
+                  <tr
+                    key={factura.id_factura}
+                    onClick={() => handleRowClick(factura.id_factura)}
+                    className={styles.clickableRow}
+                    title="Haz clic para editar esta factura"
+                  >
                     <td>{factura.id_factura}</td>
                     <td>{factura.codigo_control}</td>
                     <td>{factura.id_historia || "N/A"}</td>
@@ -340,7 +371,8 @@ export const VerFacturas = () => {
                     </td>
                     <td>{factura.historia?.paciente?.nombres || "N/A"}</td>
                     <td>{factura.historia?.paciente?.apellidos || "N/A"}</td>
-                    <td>{factura.titular || "N/A"}</td>
+                    <td>{getTitularMostrado(factura)}</td>
+                    <td>{getTipoIngresoMostrado(factura)}</td>
                     <td>
                       <span
                         className={`${styles.status} ${styles[factura.estatus.toLowerCase().replace(" ", "_")]}`}

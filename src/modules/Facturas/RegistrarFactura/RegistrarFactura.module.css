@@ -125,6 +125,32 @@ textarea {
   background-color: rgb(109, 106, 106);
 }
 
+/* Mensajes de búsqueda */
+/* Advertencia / Aclaración */
+.warning,
+.recordFound {
+  flex-basis: auto;
+  padding: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #856404;
+  margin-bottom: 1rem;
+}
+.warning p,
+.recordFound p {
+  margin: 0;
+  text-align: center;
+  font-size: 0.8rem;
+}
+/* Registro encontrado */
+.recordFound {
+  background-color: #daffcd;
+  border: 1px solid #28ff07;
+  border-radius: 8px;
+  color: #0d8504;
+}
+
 /* === BOTONES DE ACCIÓN === */
 .buttonWrapper {
   display: flex;

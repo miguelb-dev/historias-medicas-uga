@@ -2,8 +2,6 @@ v1.0.O
 
 1. Base de Datos.
 2. Facturas (VER, AGREGAR, EDITAR).
-5. Historias (EDITAR).
-6. Paciente (EDITAR).
 3. Análisis de Rendimiento.
 4. Sign-In.
 

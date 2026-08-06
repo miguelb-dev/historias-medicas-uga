@@ -1,3 +1,0 @@
-Dudas
-
-- Cuando se va a borrar una factura, no puedo borrar la historia medica asociada porque pueden haber otras facturas que apunten a ella. Asi que edito la factura o la borro (pero no la historia médica), entonces cuando vaya a hacer una nueva factura me aparecerá con una historia médica cuyo número tiene un salto. Por ejemplo, iba FACTURA 00789 -> HISTORIA 11545; FACTURA 000789 -> HISTORIA 11546 (Y aquí me equivoqué, asi que ANULE esa factura); luego al día siguiente, ahí si cuando tenemos algo, vamos con FACTURA -> 00789 -> HISTORIA 11546. Upa, aquí hay un salto, o sea hay un salto.

@@ -17,9 +17,9 @@ export const AppRoutes = () => {
 
       {/* Facturas */}
       <Route path="/facturas" element={<Facturas />}>
-        <Route path="ver-facturas" element={<VerFacturas />}></Route>
-        <Route path="registrar-factura" element={<RegistrarFactura />}></Route>
-        <Route path="editar-factura" element={<EditarFactura />}></Route>
+        <Route path="ver-facturas" element={<VerFacturas />} />
+        <Route path="registrar-factura" element={<RegistrarFactura />} />
+        <Route path="editar-factura" element={<EditarFactura />} />
       </Route>
     </Routes>
   );

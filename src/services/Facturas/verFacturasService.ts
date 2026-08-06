@@ -3,11 +3,14 @@ import { supabaseRequest } from "../supabaseClient";
 export interface Factura {
   id_factura: string;
   id_historia: number | null;
+  id_empresa: number | null;
+  id_seguro: number | null;
+  nuevo_titular: string | null;
   codigo_control: string;
   fecha_emision: string;
   titular: string;
-  tipo_ingreso: "EMPRESA" | "PARTICULAR";
-  forma_pago: "PARTICULAR" | "EMPRESA";
+  tipo_ingreso: "EMPRESA" | "PARTICULAR" | "SEGURO";
+  forma_pago: "EMPRESA" | "PARTICULAR" | "SEGURO";
   suministros_hospitalarios: number;
   servicios_cobrables: number;
   medicamentos: number;
@@ -15,12 +18,36 @@ export interface Factura {
   tasa_dolar_bcv: number;
   estatus: "PROCESADA" | "ANULADA" | "NOTA DE CREDITO";
   motivo: string | null;
+  empresa?: {
+    id_empresa: number;
+    nombre: string;
+    ruc: string;
+  };
+  seguro?: {
+    id_seguro: number;
+    nombre: string;
+    tipo: string;
+  };
   historia?: {
     id_historia: number;
+    fecha_ingreso: string;
+    fecha_egreso: string;
+    diagnostico: string;
+    cirugia: string;
+    plan: string;
+    cedula_medico: number;
+    medico?: {
+      cedula_medico: number;
+      nombres: string;
+      apellidos: string;
+    };
     paciente?: {
       cedula_paciente: number;
       nombres: string;
       apellidos: string;
+      fecha_nacimiento: string;
+      edad: number;
+      direccion: string;
     };
   };
 }
@@ -48,7 +75,7 @@ export const facturaService = {
     } = filters;
 
     // Construir la URL manualmente para tener más control
-    let url = `factura?select=id_factura,id_historia,codigo_control,fecha_emision,titular,tipo_ingreso,forma_pago,suministros_hospitalarios,servicios_cobrables,medicamentos,honorarios_medicos_y_servicios_auxiliares,tasa_dolar_bcv,estatus,motivo,historia(id_historia,paciente(cedula_paciente,nombres,apellidos))`;
+    let url = `factura?select=id_factura,id_historia,id_empresa,id_seguro,nuevo_titular,codigo_control,fecha_emision,titular,tipo_ingreso,forma_pago,suministros_hospitalarios,servicios_cobrables,medicamentos,honorarios_medicos_y_servicios_auxiliares,tasa_dolar_bcv,estatus,motivo,empresa(id_empresa,nombre,ruc),seguro(id_seguro,nombre,tipo),historia(id_historia,fecha_ingreso,fecha_egreso,diagnostico,cirugia,plan,cedula_medico,medico(cedula_medico,nombres,apellidos),paciente(cedula_paciente,nombres,apellidos,fecha_nacimiento,edad,direccion))`;
 
     const conditions = [];
 
@@ -111,8 +138,6 @@ export const facturaService = {
     // Paginación
     url += `&limit=${limit}&offset=${offset}`;
 
-    console.log("URL completa:", url);
-
     // Obtener datos con paginación
     const data = (await supabaseRequest(url)) as Factura[];
 
@@ -162,8 +187,6 @@ export const facturaService = {
         countUrl += `&${countConditions.join("&")}`;
       }
 
-      console.log("Count URL:", countUrl);
-
       const countResponse = await supabaseRequest(countUrl);
       if (Array.isArray(countResponse) && countResponse.length > 0) {
         total = (countResponse[0] as any)?.count || 0;
@@ -186,7 +209,7 @@ export const facturaService = {
       offset = 0,
     } = filters;
 
-    let url = `factura?select=id_factura,id_historia,codigo_control,fecha_emision,titular,tipo_ingreso,forma_pago,suministros_hospitalarios,servicios_cobrables,medicamentos,honorarios_medicos_y_servicios_auxiliares,tasa_dolar_bcv,estatus,motivo,historia(id_historia,paciente(cedula_paciente,nombres,apellidos))`;
+    let url = `factura?select=id_factura,id_historia,id_empresa,id_seguro,nuevo_titular,codigo_control,fecha_emision,titular,tipo_ingreso,forma_pago,suministros_hospitalarios,servicios_cobrables,medicamentos,honorarios_medicos_y_servicios_auxiliares,tasa_dolar_bcv,estatus,motivo,empresa(id_empresa,nombre,ruc),seguro(id_seguro,nombre,tipo),historia(id_historia,fecha_ingreso,fecha_egreso,diagnostico,cirugia,plan,cedula_medico,medico(cedula_medico,nombres,apellidos),paciente(cedula_paciente,nombres,apellidos,fecha_nacimiento,edad,direccion))`;
 
     const conditions = [];
 
@@ -282,5 +305,18 @@ export const facturaService = {
 
     const response = (await supabaseRequest(url)) as any[];
     return response[0]?.count || 0;
+  },
+
+  // Obtener una factura por ID (para edición)
+  async getFacturaById(idFactura: string): Promise<Factura | null> {
+    try {
+      const url = `factura?select=id_factura,id_historia,id_empresa,id_seguro,nuevo_titular,codigo_control,fecha_emision,titular,tipo_ingreso,forma_pago,suministros_hospitalarios,servicios_cobrables,medicamentos,honorarios_medicos_y_servicios_auxiliares,tasa_dolar_bcv,estatus,motivo,empresa(id_empresa,nombre,ruc),seguro(id_seguro,nombre,tipo),historia(id_historia,fecha_ingreso,fecha_egreso,diagnostico,cirugia,plan,cedula_medico,medico(cedula_medico,nombres,apellidos),paciente(cedula_paciente,nombres,apellidos,fecha_nacimiento,edad,direccion))&id_factura=eq.${encodeURIComponent(idFactura)}`;
+
+      const data = (await supabaseRequest(url)) as Factura[];
+      return data.length > 0 ? data[0] : null;
+    } catch (error) {
+      console.error("Error obteniendo factura por ID:", error);
+      return null;
+    }
   },
 };

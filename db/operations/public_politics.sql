@@ -13,6 +13,14 @@ FOR ALL USING (true);
 CREATE POLICY "Acceso público total historia" ON historia
 FOR ALL USING (true);
 
+-- Para la tabla empresa
+CREATE POLICY "Acceso público total empresa" ON empresa
+FOR ALL USING (true);
+
+-- Para la tabla seguro
+CREATE POLICY "Acceso público total seguro" ON seguro
+FOR ALL USING (true);
+
 -- Para la tabla factura
 CREATE POLICY "Acceso público total factura" ON factura
 FOR ALL USING (true);

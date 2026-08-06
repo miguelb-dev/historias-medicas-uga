@@ -1,9 +1,0 @@
-- En el formulario de Crear Factura, al momento de asignar una historia medica, no termiran de cargarse algunos datos del paciente.
-
-- En el Alert del Registro de Historia Médica, debería poder ver el Nro. de la factura.
-
-- Lo mejor es ordenar la tabla por Código de la Factura y/o por el Nro. Control. Creo que es mejor por el código del control, así no habrá problemas cuando haya una nota de crédito cuyo código pueda no estar en el orden que debería
-
-- Hay un bug al momento de buscar un registro, no me está regresando los registros que coincidan con la cédula del paciente
-
-- Debo colocar todos los campos de la BBDD en la tabla de VER FACTURAS

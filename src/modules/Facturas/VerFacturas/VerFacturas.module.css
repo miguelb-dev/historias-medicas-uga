@@ -192,7 +192,7 @@
   border: 2px solid #dee2e6;
 }
 
-/* Estilos para columnas específicas */
+/* Estilos específicos para las columnas */
 
 /* Código factura */
 .table th:nth-child(1),
@@ -204,34 +204,44 @@
 .table td:nth-child(2) {
   min-width: 120px;
 }
-
 /* Nro. Historia */
 .table th:nth-child(3),
 .table td:nth-child(3) {
   min-width: 100px;
 }
-
-/* Cédula */
+/* Cédula (Paciente) */
 .table th:nth-child(4),
 .table td:nth-child(4) {
   min-width: 120px;
 }
-
+/* Nombres */
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  min-width: 150px;
+}
+/* Apellidos */
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  min-width: 150px;
+}
 /* Titular */
 .table th:nth-child(7),
 .table td:nth-child(7) {
-  min-width: 200px;
+  min-width: 180px;
 }
-
-/* Estatus */
+/* Tipo de Ingreso */
 .table th:nth-child(8),
 .table td:nth-child(8) {
-  min-width: 130px;
+  min-width: 150px;
 }
-
-/* Fecha */
+/* Estatus */
 .table th:nth-child(9),
 .table td:nth-child(9) {
+  min-width: 150px;
+}
+/* Fecha de Emisión */
+.table th:nth-child(10),
+.table td:nth-child(10) {
   min-width: 120px;
 }
 
@@ -262,14 +272,14 @@ tbody tr:hover {
 
 tbody td {
   padding: 0.8rem 0.5rem;
-  font-size: 0.9rem; /* Reducido ligeramente para mejor ajuste */
-  word-break: break-word; /* Permite que palabras largas se rompan */
+  font-size: 0.9rem;
+  word-break: break-word; /* Evita romper el layout con las palabras largas */
 }
 
-/* Estilos para estado de la tabla */
+/* Estilos para los estados de la búsqueda */
 .loading,
-.noStatusSelected,
-.noData {
+.noStatusSelected {
+  font-weight: bold;
   height: 200px;
   display: flex;
   justify-content: center;
@@ -277,8 +287,12 @@ tbody td {
   color: var(--color-gris-oscuro);
 }
 
+/* Estilos para cuando no existen facturas */
 .noData {
-  height: 100px;
+  text-align: justify;
+  padding: 3rem 1rem 3rem 5rem;
+  color: var(--color-gris-oscuro);
+  font-weight: bold;
 }
 
 /* Estilos para el estado de la factura */

@@ -1,0 +1,12 @@
+# Rendimiento
+
+
+- Tabla de Balances:
+
+  - Mostrar el rendimiento en base a un periodo de tiempo (fecha desde hasta fecha hasta).
+
+  - Ella lo que hace es que cuenta cuantas veces pagó un seguro, y cuanto facturó por cada cada detalle de factura (suministros hospitalarios, cobrables medicamentos, honorarios médicos y servicios auxiliares).
+
+  - Por lo visto, ella excluye los seguros, pero nosotros podríamos mostrar también los particulares (o sea, agrupar todo lo que NO sea seguro, y mostrarlo como Particular).
+
+  - Preguntar por qué ella coloca aparte el FASMEE FONDO AUTOADMINISTRADO DE SALUD EL MPPEL, o sea no está junto con el resto de seguros como el de SEGUROS MIRANDO o SEGUROS CONSITUCIÓN

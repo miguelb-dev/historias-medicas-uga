@@ -10,12 +10,29 @@ import {
   guardarPaciente,
   guardarHistoria,
   guardarFactura,
+  obtenerEmpresas,
+  obtenerSeguros,
+  guardarEmpresa,
+  guardarSeguro,
+  verificarFacturaExistente,
+  verificarCodigoControlExistente,
+  verificarPacienteExistente,
 } from "../../../services/Facturas/registrarFacturaService";
 
 interface Medico {
   cedula_medico: number;
   nombres: string;
   apellidos: string;
+}
+
+interface Empresa {
+  id_empresa: number;
+  nombre: string;
+}
+
+interface Seguro {
+  id_seguro: number;
+  nombre: string;
 }
 
 export const RegistrarFactura = () => {
@@ -57,17 +74,19 @@ export const RegistrarFactura = () => {
     fecha_egreso: "",
     diagnostico: "",
     cirugia: "NO",
-    tipo_cirugia: "",
+    plan: "",
   });
 
   const [medicos, setMedicos] = useState<Medico[]>([]);
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  const [seguros, setSeguros] = useState<Seguro[]>([]);
   const [pacienteEncontrado, setPacienteEncontrado] = useState<any>(null);
   const [historiaEncontrada, setHistoriaEncontrada] = useState<any>(null);
   const [mostrarMotivo, setMostrarMotivo] = useState(false);
-  const [mostrarTipoCirugia, setMostrarTipoCirugia] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [buscandoPaciente, setBuscandoPaciente] = useState(false);
   const [buscandoHistoria, setBuscandoHistoria] = useState(false);
+  const [validando, setValidando] = useState(false);
 
   // Estados para controlar mensajes de búsqueda
   const [busquedaPacienteRealizada, setBusquedaPacienteRealizada] =
@@ -75,14 +94,60 @@ export const RegistrarFactura = () => {
   const [busquedaHistoriaRealizada, setBusquedaHistoriaRealizada] =
     useState(false);
 
-  // Cargar médicos al montar el componente
+  // Estado para controlar el tipo de input de Titular
+  const [tipoInputTitular, setTipoInputTitular] = useState<"select" | "input">(
+    "input",
+  );
+  const [titularSeleccionado, setTitularSeleccionado] = useState<string>("");
+  const [titularInput, setTitularInput] = useState<string>("");
+
+  // Cargar médicos, empresas y seguros al montar el componente
   useEffect(() => {
-    const cargarMedicos = async () => {
+    const cargarDatos = async () => {
       const listaMedicos = await obtenerMedicos();
       setMedicos(listaMedicos);
+
+      const listaEmpresas = await obtenerEmpresas();
+      setEmpresas(listaEmpresas);
+
+      const listaSeguros = await obtenerSeguros();
+      setSeguros(listaSeguros);
     };
-    cargarMedicos();
+    cargarDatos();
   }, []);
+
+  // Manejar cambio en Tipo de Ingreso
+  const handleTipoIngresoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, tipo_ingreso: value, titular: "" }));
+
+    // Resetear estados de titular
+    setTitularSeleccionado("");
+    setTitularInput("");
+
+    // Determinar qué mostrar en Titular
+    if (value === "EMPRESA" || value === "SEGURO") {
+      setTipoInputTitular("select");
+    } else {
+      setTipoInputTitular("input");
+    }
+  };
+
+  // Manejar cambio en Titular (select)
+  const handleTitularSelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const value = e.target.value;
+    setTitularSeleccionado(value);
+    setFormData((prev) => ({ ...prev, titular: value }));
+  };
+
+  // Manejar cambio en Titular (input)
+  const handleTitularInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTitularInput(value);
+    setFormData((prev) => ({ ...prev, titular: value }));
+  };
 
   // Manejar cambios en los inputs
   const handleInputChange = (
@@ -128,16 +193,6 @@ export const RegistrarFactura = () => {
     setMostrarMotivo(value !== "PROCESADA");
     if (value === "PROCESADA") {
       setFormData((prev) => ({ ...prev, motivo: "" }));
-    }
-  };
-
-  // Manejar cambio de cirugía
-  const handleCirugiaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setFormData((prev) => ({ ...prev, cirugia: value }));
-    setMostrarTipoCirugia(value === "SI");
-    if (value === "NO") {
-      setFormData((prev) => ({ ...prev, tipo_cirugia: "" }));
     }
   };
 
@@ -236,7 +291,7 @@ export const RegistrarFactura = () => {
         fecha_egreso: historia.fecha_egreso || "",
         diagnostico: historia.diagnostico || "",
         cirugia: historia.cirugia || "NO",
-        tipo_cirugia: historia.tipo_cirugia || "",
+        plan: historia.plan || "",
         cedula_medico: historia.cedula_medico?.toString() || "",
         // Cargar datos del paciente asociado
         cedula_paciente: historia.cedula_paciente?.toString() || "",
@@ -251,11 +306,6 @@ export const RegistrarFactura = () => {
       if (historia.paciente) {
         setPacienteEncontrado(historia.paciente);
       }
-
-      // Mostrar tipo de cirugía si corresponde
-      if (historia.cirugia === "SI") {
-        setMostrarTipoCirugia(true);
-      }
     } else {
       setHistoriaEncontrada(null);
     }
@@ -265,7 +315,6 @@ export const RegistrarFactura = () => {
   const handleLimpiarHistoria = () => {
     setHistoriaEncontrada(null);
     setBusquedaHistoriaRealizada(false);
-    setMostrarTipoCirugia(false);
     setFormData((prev) => ({
       ...prev,
       id_historia_buscar: "",
@@ -273,7 +322,7 @@ export const RegistrarFactura = () => {
       fecha_egreso: "",
       diagnostico: "",
       cirugia: "NO",
-      tipo_cirugia: "",
+      plan: "",
       cedula_medico: "",
       // También limpiamos los datos del paciente que se cargaron
       cedula_paciente: "",
@@ -302,7 +351,7 @@ export const RegistrarFactura = () => {
   };
 
   // Validar formulario antes de enviar
-  const validarFormulario = () => {
+  const validarFormulario = async () => {
     // SOLO validar campos obligatorios de factura
     if (
       !formData.id_factura ||
@@ -319,7 +368,48 @@ export const RegistrarFactura = () => {
       return false;
     }
 
-    // Si hay cédula de paciente pero NO existe, validar que tenga nombre y apellido
+    // === NUEVA VALIDACIÓN: Si hay paciente, debe haber médico ===
+    if (formData.cedula_paciente && !formData.cedula_medico) {
+      alert("Si registras un paciente, debes seleccionar un médico");
+      return false;
+    }
+
+    // === VALIDACIONES DE UNICIDAD ===
+
+    // 1. Verificar que el código de factura no exista
+    const facturaExiste = await verificarFacturaExistente(formData.id_factura);
+    if (facturaExiste) {
+      alert(
+        `El código de factura "${formData.id_factura}" ya está registrado.`,
+      );
+      return false;
+    }
+
+    // 2. Verificar que el código de control no exista
+    const codigoControlExiste = await verificarCodigoControlExistente(
+      formData.codigo_control,
+    );
+    if (codigoControlExiste) {
+      alert(
+        `El código de control "${formData.codigo_control}" ya está registrado.`,
+      );
+      return false;
+    }
+
+    // 3. Si hay cédula de paciente y NO está en el sistema, verificar que no exista
+    if (formData.cedula_paciente && !pacienteEncontrado) {
+      const pacienteExiste = await verificarPacienteExistente(
+        formData.cedula_paciente,
+      );
+      if (pacienteExiste) {
+        alert(
+          `La cédula "${formData.cedula_paciente}" ya está registrada. Por favor, busca el paciente existente.`,
+        );
+        return false;
+      }
+    }
+
+    // Si hay cédula de paciente pero NO existe en el sistema, validar que tenga nombre y apellido
     if (formData.cedula_paciente && !pacienteEncontrado) {
       if (!formData.nombres_paciente || !formData.apellidos_paciente) {
         alert(
@@ -336,7 +426,11 @@ export const RegistrarFactura = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validarFormulario()) {
+    // Validar formulario (ahora es asíncrono)
+    setValidando(true);
+    const esValido = await validarFormulario();
+    setValidando(false);
+    if (!esValido) {
       return;
     }
 
@@ -344,6 +438,50 @@ export const RegistrarFactura = () => {
 
     try {
       let historiaId = null;
+      let idEmpresa = null;
+      let idSeguro = null;
+      let nuevoTitular = null;
+
+      // Procesar el titular según el tipo de ingreso
+      if (formData.tipo_ingreso === "EMPRESA") {
+        if (titularSeleccionado) {
+          const empresa = empresas.find(
+            (e) => e.nombre === titularSeleccionado,
+          );
+          if (empresa) {
+            idEmpresa = empresa.id_empresa;
+          }
+        }
+      } else if (formData.tipo_ingreso === "SEGURO") {
+        if (titularSeleccionado) {
+          const seguro = seguros.find((s) => s.nombre === titularSeleccionado);
+          if (seguro) {
+            idSeguro = seguro.id_seguro;
+          }
+        }
+      } else if (formData.tipo_ingreso === "NUEVA EMPRESA") {
+        if (titularInput) {
+          const nuevaEmpresa = await guardarEmpresa(titularInput);
+          if (nuevaEmpresa) {
+            idEmpresa = nuevaEmpresa.id_empresa;
+            const listaEmpresas = await obtenerEmpresas();
+            setEmpresas(listaEmpresas);
+          }
+          nuevoTitular = titularInput;
+        }
+      } else if (formData.tipo_ingreso === "NUEVO SEGURO") {
+        if (titularInput) {
+          const nuevoSeguro = await guardarSeguro(titularInput);
+          if (nuevoSeguro) {
+            idSeguro = nuevoSeguro.id_seguro;
+            const listaSeguros = await obtenerSeguros();
+            setSeguros(listaSeguros);
+          }
+          nuevoTitular = titularInput;
+        }
+      } else if (formData.tipo_ingreso === "PARTICULAR") {
+        nuevoTitular = titularInput;
+      }
 
       // 1. Si HAY ID de historia para buscar y se encontró, usar ese ID
       if (formData.id_historia_buscar && historiaEncontrada) {
@@ -373,18 +511,17 @@ export const RegistrarFactura = () => {
           fecha_egreso: formData.fecha_egreso || null,
           diagnostico: formData.diagnostico || null,
           cirugia: formData.cirugia,
-          tipo_cirugia:
-            formData.cirugia === "SI" ? formData.tipo_cirugia : null,
+          plan: formData.plan || null,
         };
 
-        const historiaGuardada = await guardarHistoria(historiaData);
-        historiaId = historiaGuardada[0]?.id_historia;
+        const resultadoHistoria = await guardarHistoria(historiaData);
+        historiaId = resultadoHistoria.id_historia;
       }
 
       // 3. Guardar factura (SIEMPRE)
       const facturaData = {
         id_factura: formData.id_factura,
-        id_historia: historiaId, // Puede ser null si no hay paciente
+        id_historia: historiaId,
         codigo_control: formData.codigo_control,
         fecha_emision: formData.fecha_emision,
         titular: formData.titular || null,
@@ -398,11 +535,30 @@ export const RegistrarFactura = () => {
         tasa_dolar_bcv: formData.tasa_dolar_bcv || 0,
         estatus: formData.estatus,
         motivo: formData.estatus !== "PROCESADA" ? formData.motivo : null,
+        id_empresa: idEmpresa,
+        id_seguro: idSeguro,
+        nuevo_titular: nuevoTitular,
       };
 
       await guardarFactura(facturaData);
 
-      alert("¡Factura registrada exitosamente!");
+      // === MENSAJE DE ÉXITO CON EL ID DE LA HISTORIA ===
+      let mensajeExito = "¡Factura registrada exitosamente!";
+
+      // Si se creó una nueva historia
+      if (historiaId && !formData.id_historia_buscar) {
+        mensajeExito += `\n\n📋 Historia Médica N°: ${historiaId}`;
+      }
+      // Si se usó una historia existente
+      else if (formData.id_historia_buscar && historiaEncontrada) {
+        mensajeExito += `\n\n📋 Historia Médica N°: ${historiaEncontrada.id_historia}`;
+      }
+      // Si no hay historia asociada
+      else {
+        mensajeExito += `\n\n📋 Sin Historia Médica asociada`;
+      }
+
+      alert(mensajeExito);
       navigate("/facturas");
     } catch (error: any) {
       console.error("Error al guardar:", error);
@@ -432,7 +588,7 @@ export const RegistrarFactura = () => {
             required
             value={formData.id_factura}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -447,7 +603,7 @@ export const RegistrarFactura = () => {
             required
             value={formData.codigo_control}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -462,19 +618,7 @@ export const RegistrarFactura = () => {
             required
             value={formData.fecha_emision}
             onChange={handleInputChange}
-            disabled={cargando}
-          />
-        </div>
-
-        {/* Titular */}
-        <div className={styles.inputWrapper}>
-          <label htmlFor="titular">Titular</label>
-          <input
-            id="titular"
-            type="text"
-            value={formData.titular}
-            onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -484,12 +628,51 @@ export const RegistrarFactura = () => {
           <select
             id="tipo_ingreso"
             value={formData.tipo_ingreso}
-            onChange={handleInputChange}
-            disabled={cargando}
+            onChange={handleTipoIngresoChange}
+            disabled={cargando || validando}
           >
+            <option value="">...</option>
             <option value="EMPRESA">Empresa</option>
+            <option value="SEGURO">Seguro</option>
             <option value="PARTICULAR">Particular</option>
+            <option value="NUEVA EMPRESA">Nueva Empresa</option>
+            <option value="NUEVO SEGURO">Nuevo Seguro</option>
           </select>
+        </div>
+
+        {/* Titular */}
+        <div className={styles.inputWrapper}>
+          <label htmlFor="titular">Titular</label>
+          {tipoInputTitular === "select" ? (
+            <select
+              id="titular"
+              value={titularSeleccionado}
+              onChange={handleTitularSelectChange}
+              disabled={cargando || validando}
+            >
+              <option value="">Seleccionar...</option>
+              {formData.tipo_ingreso === "EMPRESA" &&
+                empresas.map((empresa) => (
+                  <option key={empresa.id_empresa} value={empresa.nombre}>
+                    {empresa.nombre}
+                  </option>
+                ))}
+              {formData.tipo_ingreso === "SEGURO" &&
+                seguros.map((seguro) => (
+                  <option key={seguro.id_seguro} value={seguro.nombre}>
+                    {seguro.nombre}
+                  </option>
+                ))}
+            </select>
+          ) : (
+            <input
+              id="titular"
+              type="text"
+              value={titularInput}
+              onChange={handleTitularInputChange}
+              disabled={cargando || validando}
+            />
+          )}
         </div>
 
         {/* Forma de Pago */}
@@ -499,9 +682,11 @@ export const RegistrarFactura = () => {
             id="forma_pago"
             value={formData.forma_pago}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           >
+            <option value="">...</option>
             <option value="EMPRESA">Empresa</option>
+            <option value="SEGURO">Seguro</option>
             <option value="PARTICULAR">Particular</option>
           </select>
         </div>
@@ -515,10 +700,9 @@ export const RegistrarFactura = () => {
           <input
             id="suministros_hospitalarios"
             type="text"
-            placeholder="0.00"
             value={formData.suministros_hospitalarios}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -530,10 +714,9 @@ export const RegistrarFactura = () => {
           <input
             id="servicios_cobrables"
             type="text"
-            placeholder="0.00"
             value={formData.servicios_cobrables}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -545,10 +728,9 @@ export const RegistrarFactura = () => {
           <input
             id="medicamentos"
             type="text"
-            placeholder="0.00"
             value={formData.medicamentos}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -561,10 +743,9 @@ export const RegistrarFactura = () => {
           <input
             id="honorarios_medicos_y_servicios_auxiliares"
             type="text"
-            placeholder="0.00"
             value={formData.honorarios_medicos_y_servicios_auxiliares}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -574,10 +755,9 @@ export const RegistrarFactura = () => {
           <input
             id="tasa_dolar_bcv"
             type="text"
-            placeholder="0.00"
             value={formData.tasa_dolar_bcv}
             onChange={handleInputChange}
-            disabled={cargando}
+            disabled={cargando || validando}
           />
         </div>
 
@@ -588,7 +768,7 @@ export const RegistrarFactura = () => {
             id="estatus"
             onChange={handleEstatusChange}
             value={formData.estatus}
-            disabled={cargando}
+            disabled={cargando || validando}
           >
             <option value="PROCESADA">Procesada</option>
             <option value="ANULADA">Anulada</option>
@@ -605,7 +785,7 @@ export const RegistrarFactura = () => {
               rows={5}
               value={formData.motivo}
               onChange={handleInputChange}
-              disabled={cargando}
+              disabled={cargando || validando}
               required
             />
           </div>
@@ -625,14 +805,35 @@ export const RegistrarFactura = () => {
               type="text"
               value={formData.cedula_paciente}
               onChange={handleInputChange}
-              disabled={cargando || buscandoPaciente || !!historiaEncontrada}
+              disabled={
+                cargando ||
+                validando ||
+                buscandoPaciente ||
+                !!historiaEncontrada
+              }
             />
+            {/* Mostrar resultado de búsqueda*/}
+            {busquedaPacienteRealizada && !buscandoPaciente && (
+              <>
+                {pacienteEncontrado ? (
+                  <div className={styles.recordFound}>
+                    <p>✅ Paciente encontrado</p>
+                  </div>
+                ) : (
+                  <div className={styles.warning}>
+                    <p>⚠️ Paciente no encontrado</p>
+                    <p>Se creará uno nuevo</p>
+                  </div>
+                )}
+              </>
+            )}
             <button
               className={styles.searchButton}
               type="button"
               onClick={handleBuscarPaciente}
               disabled={
                 cargando ||
+                validando ||
                 buscandoPaciente ||
                 !formData.cedula_paciente ||
                 !!historiaEncontrada
@@ -644,29 +845,11 @@ export const RegistrarFactura = () => {
               className={styles.clearButton}
               type="button"
               onClick={handleLimpiarPaciente}
-              disabled={cargando || !!historiaEncontrada}
+              disabled={cargando || validando || !!historiaEncontrada}
             >
               Limpiar
             </button>
           </div>
-          {/* Mostrar mensaje solo después de buscar */}
-          {busquedaPacienteRealizada && !buscandoPaciente && (
-            <>
-              {pacienteEncontrado ? (
-                <small style={{ color: "green", textAlign: "center" }}>
-                  ✓ Paciente encontrado
-                </small>
-              ) : (
-                <div style={{ textAlign: "center" }}>
-                  <small style={{ color: "orange" }}>
-                    ⚠ Paciente no encontrado
-                  </small>
-                  <br />
-                  <small style={{ color: "orange" }}>Se creará uno nuevo</small>
-                </div>
-              )}
-            </>
-          )}
         </div>
 
         {/* Nombres del Paciente */}
@@ -677,7 +860,7 @@ export const RegistrarFactura = () => {
             type="text"
             value={formData.nombres_paciente}
             onChange={handleInputChange}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
             placeholder={historiaEncontrada ? "Cargado de la historia" : ""}
           />
         </div>
@@ -690,7 +873,7 @@ export const RegistrarFactura = () => {
             type="text"
             value={formData.apellidos_paciente}
             onChange={handleInputChange}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
             placeholder={historiaEncontrada ? "Cargado de la historia" : ""}
           />
         </div>
@@ -703,7 +886,7 @@ export const RegistrarFactura = () => {
             type="date"
             value={formData.fecha_nacimiento}
             onChange={handleFechaNacimiento}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
           />
         </div>
 
@@ -728,7 +911,7 @@ export const RegistrarFactura = () => {
             rows={5}
             value={formData.direccion_paciente}
             onChange={handleInputChange}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
             placeholder={historiaEncontrada ? "Cargado de la historia" : ""}
           />
         </div>
@@ -745,7 +928,7 @@ export const RegistrarFactura = () => {
             id="cedula_medico"
             onChange={handleMedicoChange}
             value={formData.cedula_medico}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
           >
             <option value="">
               {historiaEncontrada ? "Cargado de la historia" : "..."}
@@ -778,21 +961,49 @@ export const RegistrarFactura = () => {
 
         {/* Buscador de Historia */}
         <div className={styles.inputWrapper}>
-          <label htmlFor="id_historia_buscar">Asinar Historia</label>
+          <label htmlFor="id_historia_buscar">
+            Asignar Historia (Opcional)
+          </label>
           <div className={styles.search}>
             <input
               id="id_historia_buscar"
               type="text"
               value={formData.id_historia_buscar}
               onChange={handleInputChange}
-              disabled={cargando || buscandoHistoria}
+              disabled={cargando || validando || buscandoHistoria}
             />
+            {/* Mensaje de aclaración para el usuario */}
+            <div className={styles.warning}>
+              <p>
+                ⚠️ Rellenar este campo solo si es una factura para una Historia
+                Médica existente. De lo contrario, dejar en blanco.
+              </p>
+            </div>
+
+            {/* Mostrar resultado de la búsqueda */}
+            {busquedaHistoriaRealizada && !buscandoHistoria && (
+              <>
+                {historiaEncontrada ? (
+                  <div className={styles.recordFound}>
+                    <p>✅ Historia Médica encontrada</p>
+                  </div>
+                ) : (
+                  <div className={styles.warning}>
+                    <p>⚠️ Historia Médica no econtrada.</p>
+                    <p>Se creará una nueva.</p>
+                  </div>
+                )}
+              </>
+            )}
             <button
               className={styles.searchButton}
               type="button"
               onClick={handleBuscarHistoria}
               disabled={
-                cargando || buscandoHistoria || !formData.id_historia_buscar
+                cargando ||
+                validando ||
+                buscandoHistoria ||
+                !formData.id_historia_buscar
               }
             >
               {buscandoHistoria ? "Buscando..." : "Buscar"}
@@ -801,32 +1012,14 @@ export const RegistrarFactura = () => {
               className={styles.clearButton}
               type="button"
               onClick={handleLimpiarHistoria}
-              disabled={cargando}
+              disabled={cargando || validando}
             >
               Limpiar
             </button>
           </div>
-          {/* Mostrar mensaje solo después de buscar */}
-          {busquedaHistoriaRealizada && !buscandoHistoria && (
-            <>
-              {historiaEncontrada ? (
-                <small style={{ color: "green", textAlign: "center" }}>
-                  ✓ Historia encontrada
-                </small>
-              ) : (
-                <div style={{ textAlign: "center" }}>
-                  <small style={{ color: "orange" }}>
-                    ⚠ Historia no encontrada
-                  </small>
-                  <br />
-                  <small style={{ color: "orange" }}>Se creará una nueva</small>
-                </div>
-              )}
-            </>
-          )}
         </div>
 
-        {/* Campos de la historia */}
+        {/* Fecha de Ingreso */}
         <div className={styles.inputWrapper}>
           <label htmlFor="fecha_ingreso">Fecha de Ingreso</label>
           <input
@@ -834,10 +1027,11 @@ export const RegistrarFactura = () => {
             type="date"
             value={formData.fecha_ingreso}
             onChange={handleInputChange}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
           />
         </div>
 
+        {/* Fecha de Egreso */}
         <div className={styles.inputWrapper}>
           <label htmlFor="fecha_egreso">Fecha de Egreso</label>
           <input
@@ -845,41 +1039,45 @@ export const RegistrarFactura = () => {
             type="date"
             value={formData.fecha_egreso}
             onChange={handleInputChange}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
           />
         </div>
 
+        {/* Cirugía */}
         <div className={styles.inputWrapper}>
           <label htmlFor="cirugia">Cirugía</label>
           <select
             id="cirugia"
-            onChange={handleCirugiaChange}
+            onChange={handleInputChange}
             value={formData.cirugia}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
           >
             <option value="NO">No</option>
             <option value="SI">Si</option>
           </select>
         </div>
 
-        {mostrarTipoCirugia && (
-          <div className={styles.inputWrapper}>
-            <label htmlFor="tipo_cirugia">Tipo de Cirugía</label>
-            <select
-              id="tipo_cirugia"
-              value={formData.tipo_cirugia}
-              onChange={handleInputChange}
-              disabled={cargando || !!historiaEncontrada}
-            >
-              <option value="">...</option>
-              <option value="HOSPITALIZACION">HOSPITALIZACION</option>
-              <option value="PLAN CRG">PLAN CRG</option>
-              <option value="PLAN URL">PLAN URL</option>
-              <option value="PLAN OFT">PLAN OFT</option>
-            </select>
-          </div>
-        )}
+        {/* Plan */}
+        <div className={styles.inputWrapper}>
+          <label htmlFor="plan">Plan</label>
+          <select
+            id="plan"
+            value={formData.plan}
+            onChange={handleInputChange}
+            disabled={cargando || validando || !!historiaEncontrada}
+          >
+            <option value="">...</option>
+            <option value="HOSPITALIZACION">HOSPITALIZACION</option>
+            <option value="CASO SOCIAL">CASO SOCIAL</option>
+            <option value="MATERNIDAD">MATERNIDAD</option>
+            <option value="CIRUGIA GENERAL">CIRUGIA GENERAL</option>
+            <option value="CIRUGIA PEDIATRICA">CIRUGIA PEDIATRICA</option>
+            <option value="UROLOGIA">UROLOGIA</option>
+            <option value="OFTALMOLOGIA">OFTALMOLOGIA</option>
+          </select>
+        </div>
 
+        {/* Diagnóstico */}
         <div className={styles.inputWrapper}>
           <label htmlFor="diagnostico">Diagnóstico</label>
           <textarea
@@ -887,21 +1085,25 @@ export const RegistrarFactura = () => {
             rows={5}
             value={formData.diagnostico}
             onChange={handleInputChange}
-            disabled={cargando || !!historiaEncontrada}
+            disabled={cargando || validando || !!historiaEncontrada}
           />
         </div>
       </fieldset>
 
       {/* === BOTONES DE ACCIÓN === */}
       <div className={styles.buttonWrapper}>
-        <button type="submit" className={styles.saveButton} disabled={cargando}>
-          {cargando ? "Guardando..." : "Registrar"}
+        <button
+          type="submit"
+          className={styles.saveButton}
+          disabled={cargando || validando}
+        >
+          {cargando ? "Guardando..." : validando ? "Validando..." : "Registrar"}
         </button>
         <button
           onClick={() => navigate("/facturas")}
           type="button"
           className={styles.cancelButton}
-          disabled={cargando}
+          disabled={cargando || validando}
         >
           Cancelar
         </button>
